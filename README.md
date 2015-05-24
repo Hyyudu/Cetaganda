@@ -1,1 +1,1 @@
-# Cetaganda
+cetaganda.ru

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Добавление обратной связи</h1>
+
+    <p>Исходная связь: <br>от <strong>{{ connection.role }}</strong> к <strong>{{connection.role_rel }}</strong>:
+        <br><blockquote>{{ connection.comment }}</blockquote></p>
+
+    <p>Будет создана связь от {{ connection.role_rel }} к {{connection.role }} с тем же сюжетом и указанным описанием.</p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table class="table" style="width: auto">
+            <tbody>
+                {{ form }}
+                <tr><td colspan="2"><input type="submit" value="Добавить"></td></tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

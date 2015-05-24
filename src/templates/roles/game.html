@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Игра "{{ game.title }}"
+        {% if can_edit %}
+            <button type="button" class="btn btn-primary btn-sm">вы мастер</button>
+            {% if game.paid %}
+                <button type="button" class="btn btn-success btn-sm">оплачено</button>
+            {% else %}
+                <button type="button" class="btn btn-danger btn-sm">не оплачено</button>
+            {% endif %}
+        {% endif %}</h1>
+
+    {% if object.start %}
+        <p>Начало игры: {{ object.start }}</p>
+    {% endif %}
+    {% if object.allrpg %}
+        <p>Описание на allrpg.ru: <a href="{{ object.allrpg }}" rel="nofollow" target="_blank">{{ object.allrpg }}</a></p>
+    {% endif %}
+    <p>{{ game.description|linebreaks }}</p>
+
+    <h2>Роли</h2>
+    <ul>
+        {% for role in roles %}
+            <li><a href="{{ role.get_absolute_url }}">{{ role }}</a>
+                ({% if role.user %}занята{% if role.user == request.user %} вами{% endif %}{% else %}свободна{% endif %})
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if free_user and not owner %}
+        <p>Ни одна из ролей мне не нравится, <a href="{% url "new_role" game.pk %}">создам новую</a>.</p>
+    {% endif %}
+
+    {% if can_edit %}
+        <p><a href="{% url "new_free_role" game.pk %}">Добавить роль</a></p>
+
+        <h2>Редактирование</h2>
+        <ul>
+            <li><a href="{% url "edit_game" object.pk %}">Игра</a></li>
+            <li><a href="{% url "edit_game_fields" object.pk %}">Поля ролей</a></li>
+            <li><a href="{% url "edit_game_groups" object.pk %}">Блоки</a></li>
+            <li><a href="{% url "edit_game_topics" object.pk %}">Сюжеты</a></li>
+        </ul>
+
+        <h2>Отчеты</h2>
+        <ul>
+            <li><a href="{% url "report_connections_table" game.pk %}">Таблица связей</a></li>
+            <li><a href="{% url "report_connections_diagram" game.pk %}">Диаграмма связей</a></li>
+            <li><a href="{% url "report_dual_connections" game.pk %}">Непарные связи</a></li>
+            <li><a href="{% url "report_full_roles" game.pk %}">Роли для печати</a></li>
+        </ul>
+    {% endif %}
+{% endblock %}

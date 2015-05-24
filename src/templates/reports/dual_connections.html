@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static "games/style.css" %}"/>
+{% endblock %}
+
+{% block content %}
+    <h1>Игра "<a href="{{ object.get_absolute_url }}">{{ object.title }}</a>": непарные связи</h1>
+
+    {% for connection in missing %}
+        <p>Есть связь от <a href="{% url "role" connection.role.pk %}">{{ connection.role }}</a>
+            до <a href="{% url "role" connection.role_rel.pk %}">{{ connection.role_rel }}</a>{% if connection.topic %}
+                с сюжетом "{{ connection.topic }}"{% endif %}, но нет обратной
+            - <a href="{% url "add_connection" connection.role.pk %}?based_on={{ connection.pk }}">добавить</a></p>
+
+    {% empty %}
+        <p>Непарных связей не найдено.</p>
+    {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static "games/style.css" %}"/>
+{% endblock %}
+
+{% block content %}
+    <h1>Игра "<a href="{{ object.get_absolute_url }}">{{ object.title }}</a>": все связи</h1>
+
+    <table class="table" style="width: auto">
+        {% for pair in paired_connections %}
+            <tr>
+                <td>{{ pair.2 }}</td>
+                <td><a href="{% url "role" pair.0.pk %}">{{ pair.0 }}</a><br>
+                    {{ pair.3.comment|default:"-" }}</td>
+                <td><a href="{% url "role" pair.1.pk %}">{{ pair.1 }}</a><br>
+                    {{ pair.4.comment|default:"-" }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

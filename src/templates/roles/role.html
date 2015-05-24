@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load roles_tags %}
+
+{% block content %}
+    <h1>
+        Игра "<a href="{{ role.game.get_absolute_url }}">{{ role.game.title }}</a>", роль "{{ role.name }}"
+        {% if player %}
+            <button type="button" class="btn btn-primary btn-sm">это ваша роль</button>
+        {% endif %}
+        {% if owner %}
+            <button type="button" class="btn btn-primary btn-sm">вы мастер</button>
+        {% endif %}
+
+        {% if can_edit %}
+            <small>(<a href="{% url "edit_role" role.pk %}">редактировать роль</a>)
+                (<a href="{% url "edit_role_connections" role.pk %}">редактировать связи</a>)</small>
+        {% endif %}
+
+        {% if owner %}
+            <small>(<a href="{% url "delete_role" role.pk %}">удалить роль</a>)</small>
+        {% endif %}
+    </h1>
+
+    <p>
+        {% if role.user %}Игрок - {{ role.user|nick }}
+            {% if owner %}
+                (<a href="?free=1" onclick="return confirm('Вы уверены, что хотите снять игрока с этой роли?')">освободить</a>)
+            {% endif %}
+        {% else %}
+            Не занята
+            {% if can_occupy %}
+                (<a href="?take=1" onclick="return confirm('Вы уверены, что хотите занять эту роль?')">занять эту роль</a>)
+            {% endif %}
+        {% endif %}
+    </p>
+
+    <table class="table table-bordered" style="width: auto;">
+        {% if role.group %}
+            <tr><td>Блок</td><td>{{ role.group }}</td></tr>
+        {% endif %}
+        {% for field in fields %}
+            <tr><td>{{ field.field.name }}</td><td>{{ field.get_value }}</td></tr>
+        {% endfor %}
+    </table>
+
+    {% if connections %}
+        <h2>Связи</h2>
+        <ul>
+            {% for connection in connections %}
+                <li><a href="{{ connection.role_rel.get_absolute_url }}">{{ connection.role_rel }}</a>
+                    <blockquote>
+                        {% if connection.topic %}
+                            <strong>{{ connection.topic }}</strong><br>
+                        {% endif %}
+                        {{ connection.comment }}
+                    </blockquote>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
