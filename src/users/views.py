@@ -7,7 +7,7 @@ from django.http.response import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, FormView
 
 from users import forms
-from users.decorators import class_view_decorator
+from roles.decorators import class_view_decorator
 
 
 @class_view_decorator(login_required)

@@ -6,16 +6,6 @@ from django.contrib import admin
 from . import models
 
 
-class MasterInline(admin.TabularInline):
-    model = models.Master
-    extra = 0
-
-
-class GameAdmin(admin.ModelAdmin):
-    list_display = ('title', 'paid')
-    inlines = (MasterInline,)
-
-
 class RoleConnectionInline(admin.TabularInline):
     model = models.RoleConnection
     fk_name = 'role'

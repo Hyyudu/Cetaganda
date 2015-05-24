@@ -57,13 +57,13 @@ class GameFieldsView(GameDescendantsView):
 class GameGroupsView(GameDescendantsView):
     """Редактирование блоков игры"""
     template_name = 'roles/edit_game_groups.html'
-    formset = forms.GameGroupsFormSet
+    formset = forms.GroupsFormSet
 
 
 class GameTopicsView(GameDescendantsView):
     """Редактирование сюжетов игры"""
     template_name = 'roles/edit_game_topics.html'
-    formset = forms.GameTopicsFormSet
+    formset = forms.TopicsFormSet
 
 
 @class_view_decorator(login_required)
@@ -266,9 +266,8 @@ class AddConnectionView(FormView):
 
 
 @class_view_decorator(login_required)
-class ReportConnectionsDiagram(DetailView):
+class ReportConnectionsDiagram(TemplateView):
     template_name = 'reports/connections_diagram.html'
-    queryset = Game.objects.all()
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -322,9 +321,8 @@ def slug(title):
 
 
 @class_view_decorator(login_required)
-class ReportConnectionsData(DetailView):
+class ReportConnectionsData(TemplateView):
     template_name = 'reports/connections_diagram.html'
-    queryset = Game.objects.all()
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -363,9 +361,8 @@ class ReportConnectionsData(DetailView):
 
 
 @class_view_decorator(login_required)
-class ReportConnectionsTable(DetailView):
+class ReportConnectionsTable(TemplateView):
     template_name = 'reports/connections_table.html'
-    queryset = Game.objects.all()
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -399,9 +396,8 @@ class ReportConnectionsTable(DetailView):
 
 
 @class_view_decorator(login_required)
-class ReportFullRolesData(DetailView):
+class ReportFullRolesData(TemplateView):
     template_name = 'reports/full.html'
-    queryset = Game.objects.all()
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -420,9 +416,8 @@ class ReportFullRolesData(DetailView):
 
 
 @class_view_decorator(login_required)
-class ReportDualConnections(DetailView):
+class ReportDualConnections(TemplateView):
     template_name = 'reports/dual_connections.html'
-    queryset = Game.objects.all()
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()

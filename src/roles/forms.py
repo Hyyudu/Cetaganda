@@ -38,10 +38,6 @@ class RoleForm(forms.ModelForm):
         fields = ('name', 'group')
 
     def __init__(self, *args, **kwargs):
-        if kwargs.get('instance'):
-            self.game = kwargs['instance'].game
-        else:
-            self.game = kwargs.pop('game')
         self.request = kwargs.pop('request')
         super(RoleForm, self).__init__(*args, **kwargs)
 
@@ -50,7 +46,7 @@ class RoleForm(forms.ModelForm):
             for group in models.Group.objects.filter(game=self.game)
         ]
 
-        fields = models.GameField.objects.filter(game=self.game).order_by('order')
+        fields = models.GameField.objects.all().order_by('order')
         if self.game.is_master(self.request.user):
             visibility = ('master', 'player', 'all')
         elif kwargs.get('instance') and kwargs.get('instance').user != self.request.user:
@@ -113,10 +109,9 @@ class DualConnectionForm(forms.Form):
         )
 
 
-GameForm = modelform_factory(models.Game, exclude=('owner', 'paid'))
-GameFieldsFormSet = forms.inlineformset_factory(models.Game, models.GameField, fk_name='game', extra=3, exclude=[])
-GameGroupsFormSet = forms.inlineformset_factory(models.Game, models.Group, fk_name='game', extra=3, exclude=[])
-GameTopicsFormSet = forms.inlineformset_factory(models.Game, models.Topic, fk_name='game', extra=3, exclude=[])
+GameFieldsFormSet = forms.modelform_factory(models.GameField, exclude=[])
+GroupsFormSet = forms.modelform_factory(models.Group, exclude=[])
+TopicsFormSet = forms.modelform_factory(models.Topic, exclude=[])
 
 
 class BaseConnectionForm(forms.ModelForm):

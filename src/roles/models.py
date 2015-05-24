@@ -5,17 +5,7 @@ from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-ALBUM = getattr(settings, 'YAFOTKI_ALBUM', 'default')
-
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
-
-
-class Master(models.Model):
-    user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='Мастер')
-
-    class Meta:
-        verbose_name = 'Мастер'
-        verbose_name_plural = 'Мастера'
 
 
 class GameField(models.Model):
@@ -76,8 +66,10 @@ class Role(models.Model):
     group = models.ForeignKey(Group, verbose_name='Блок', null=True, blank=True, default=None)
     user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='Пользователь', null=True, blank=True, default=None)
     name = models.CharField(verbose_name='Имя', max_length=255)
-    is_locked = models.BooleanField(verbose_name='Заморожена', default=False,
-                                    help_text='Можно ли человеку редактировать роль')
+    is_locked = models.BooleanField(
+        verbose_name='Заморожена', default=False,
+        help_text='Можно ли игроку редактировать роль',
+    )
 
     def __unicode__(self):
         return self.name
@@ -99,6 +91,9 @@ class Role(models.Model):
     class Meta:
         verbose_name = 'Роль'
         verbose_name_plural = 'Роли'
+        permissions = (
+            ('can_edit_role', 'Может редактировать роли'),
+        )
 
 
 class RoleField(models.Model):

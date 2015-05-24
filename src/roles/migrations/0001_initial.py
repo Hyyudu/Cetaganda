@@ -43,28 +43,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Master',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('user', models.ForeignKey(verbose_name='\u041c\u0430\u0441\u0442\u0435\u0440', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': '\u041c\u0430\u0441\u0442\u0435\u0440',
-                'verbose_name_plural': '\u041c\u0430\u0441\u0442\u0435\u0440\u0430',
-            },
-        ),
-        migrations.CreateModel(
             name='Role',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255, verbose_name='\u0418\u043c\u044f')),
-                ('is_locked', models.BooleanField(default=False, help_text='\u041c\u043e\u0436\u043d\u043e \u043b\u0438 \u0447\u0435\u043b\u043e\u0432\u0435\u043a\u0443 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0440\u043e\u043b\u044c', verbose_name='\u0417\u0430\u043c\u043e\u0440\u043e\u0436\u0435\u043d\u0430')),
+                ('is_locked', models.BooleanField(default=False, help_text='\u041c\u043e\u0436\u043d\u043e \u043b\u0438 \u0438\u0433\u0440\u043e\u043a\u0443 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0440\u043e\u043b\u044c', verbose_name='\u0417\u0430\u043c\u043e\u0440\u043e\u0436\u0435\u043d\u0430')),
                 ('group', models.ForeignKey(default=None, blank=True, to='roles.Group', null=True, verbose_name='\u0411\u043b\u043e\u043a')),
                 ('user', models.ForeignKey(default=None, blank=True, to=settings.AUTH_USER_MODEL, null=True, verbose_name='\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c')),
             ],
             options={
                 'verbose_name': '\u0420\u043e\u043b\u044c',
                 'verbose_name_plural': '\u0420\u043e\u043b\u0438',
+                'permissions': (('can_edit_role', '\u041c\u043e\u0436\u0435\u0442 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0440\u043e\u043b\u0438'),),
             },
         ),
         migrations.CreateModel(
