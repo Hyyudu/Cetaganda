@@ -48,12 +48,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'yafotki',
+    'django_ulogin',
     'gunicorn',
     'redactor',
-    'django_ulogin',
+    'yafotki',
 
     'staticpages',
+    'users',
     'roles',
 )
 

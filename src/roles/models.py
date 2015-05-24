@@ -1,104 +1,16 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import uuid
-
 from django.db import models
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.utils.crypto import get_random_string
 from django.core.urlresolvers import reverse
-
-from django_ulogin.models import ULoginUser
-from django_ulogin.signals import assign
 
 ALBUM = getattr(settings, 'YAFOTKI_ALBUM', 'default')
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
-class UserInfo(models.Model):
-    SEX_FEMALE = 1
-    SEX_MALE = 2
-
-    ulogin = models.ForeignKey(ULoginUser, null=True, blank=True, default=None)
-    user = models.ForeignKey(AUTH_USER_MODEL, null=True, blank=True, default=None)
-    nick = models.CharField(verbose_name='Ник', blank=True, default='', max_length=255)
-    age = models.IntegerField(verbose_name='Возраст', blank=True, null=True, default=None)
-    sex = models.IntegerField(blank=True, null=True, choices=((SEX_MALE, 'male'), (SEX_FEMALE, 'female')))
-    phone = models.CharField(blank=True, default='', max_length=255)
-    city = models.CharField(blank=True, default='', max_length=255)
-    med = models.TextField(verbose_name='Медицина', default='')
-
-
-def catch_ulogin_signal(*args, **kwargs):
-    user = kwargs['user']
-    json = kwargs['ulogin_data']
-    ulogin = kwargs['ulogin_user']
-
-    if kwargs['registered']:
-        user.first_name = json['first_name']
-        user.last_name = json['last_name']
-        user.save()
-
-        data = {'ulogin': ulogin}
-
-        for fld in ['sex', 'city']:
-            if fld not in json:
-                continue
-            data[fld] = json[fld]
-
-        UserInfo.objects.create(**data)
-
-assign.connect(catch_ulogin_signal, sender=ULoginUser, dispatch_uid='customize.models')
-
-
-def create_user(request, ulogin_response):
-    User = get_user_model()
-    return User.objects.create_user(
-        username=uuid.uuid4().hex[:30],
-        password=get_random_string(20, '0123456789abcdefghijklmnopqrstuvwxyz'),
-        email='',
-    )
-
-
-class Game(models.Model):
-    owner = models.ForeignKey(AUTH_USER_MODEL, verbose_name='Мастер')
-    title = models.CharField(verbose_name='Название', max_length=255)
-    allrpg = models.CharField(verbose_name='Ссылка на allrpg.r', max_length=255, null=True, blank=True, default=None)
-    start = models.DateField(verbose_name='Дата начала', null=True, blank=True, default=None,
-                             help_text='В виде 2015-01-31')
-    description = models.TextField(verbose_name='Описание', null=True, blank=True, default=None)
-    paid = models.BooleanField(verbose_name='Оплачено', default=False)
-
-    def __unicode__(self):
-        return self.title
-
-    def get_absolute_url(self):
-        return reverse('game', args=[self.pk])
-
-    def is_master(self, user):
-        if not user.is_authenticated():
-            return False
-
-        if user.is_superuser or user == self.owner or self.pk == 1:
-            return True
-
-        if self.master_set.filter(user=user).exists():
-            return True
-
-        return False
-
-    def is_paid(self):
-        return self.paid or self.pk == 1
-
-    class Meta:
-        verbose_name = 'Игра'
-        verbose_name_plural = 'Игры'
-
-
 class Master(models.Model):
-    game = models.ForeignKey(Game, verbose_name='Игра')
     user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='Мастер')
 
     class Meta:
@@ -113,7 +25,6 @@ class GameField(models.Model):
         (3, 'Число'),
         (4, 'Варианты'),
     )
-    game = models.ForeignKey(Game, verbose_name='Игра')
     name = models.CharField(verbose_name='Название', max_length=255)
     type = models.IntegerField(verbose_name='Тип поля', choices=TYPES)
     additional = models.CharField(verbose_name='Доп инфо', max_length=255, null=True, blank=True, default=None,
@@ -125,16 +36,16 @@ class GameField(models.Model):
         choices=(('master', 'Мастер'), ('player', 'Игрок'), ('all', 'Все')),
         default='all',
     )
+    required = models.BooleanField(verbose_name='Обязательное', default=False)
 
     class Meta:
         verbose_name = 'Поле игры'
         verbose_name_plural = 'Поля ролей'
-        ordering = ('game', 'order')
+        ordering = ('order',)
 
 
 class Group(models.Model):
     """Группировка ролей"""
-    game = models.ForeignKey(Game, verbose_name='Игра')
     name = models.CharField(verbose_name='Название', max_length=255)
     description = models.TextField(verbose_name='Описание', null=True, blank=True, default=None)
     color = models.CharField(verbose_name='Цвет', default='000000', max_length=6, help_text='В hex формате')
@@ -149,7 +60,6 @@ class Group(models.Model):
 
 class Topic(models.Model):
     """Сюжет для связей ролей"""
-    game = models.ForeignKey(Game, verbose_name='Игра')
     name = models.CharField(verbose_name='Название', max_length=255)
     description = models.TextField(verbose_name='Описание', null=True, blank=True, default=None)
     color = models.CharField(verbose_name='Цвет', default='000000', max_length=6, help_text='В hex формате')
@@ -163,7 +73,6 @@ class Topic(models.Model):
 
 
 class Role(models.Model):
-    game = models.ForeignKey(Game, verbose_name='Игра')
     group = models.ForeignKey(Group, verbose_name='Блок', null=True, blank=True, default=None)
     user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='Пользователь', null=True, blank=True, default=None)
     name = models.CharField(verbose_name='Имя', max_length=255)
@@ -179,6 +88,7 @@ class Role(models.Model):
     def username(self):
         if not self.user:
             return '-'
+        from users.models import UserInfo
         userinfo = UserInfo.objects.get(ulogin__user=self.user)
         name = '%s %s' % (self.user.last_name, self.user.first_name)
         if userinfo.nick:

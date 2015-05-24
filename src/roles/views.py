@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from json import dumps
 
-from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http.response import Http404, HttpResponseRedirect, HttpResponse
@@ -13,96 +12,7 @@ from django.template.response import TemplateResponse
 
 from roles import forms
 from roles.decorators import class_view_decorator
-from roles.models import Role, Game, RoleField, RoleConnection, Topic
-
-
-class IndexView(TemplateView):
-    template_name = 'index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        context['all_roles'] = Game.objects.filter(paid=True)
-
-        if self.request.user.is_authenticated():
-            context['roles'] = Role.objects.filter(user=self.request.user)
-            context['own_roles'] = Game.objects.filter(owner=self.request.user)
-        return context
-
-
-@class_view_decorator(login_required)
-class CabinetView(FormView):
-    """Редактирование профиля"""
-    template_name = 'roles/profile_edit.html'
-    form_class = forms.CabinetForm
-    success_url = '/'
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated():
-            raise Http404
-        return super(CabinetView, self).dispatch(request, *args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super(CabinetView, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        form.save()
-        return super(CabinetView, self).form_valid(form)
-
-
-@class_view_decorator(login_required)
-class CreateGameView(CreateView):
-    """Создание роли"""
-    template_name = 'roles/new_game.html'
-    form_class = forms.GameForm
-
-    def form_valid(self, form):
-        game = form.save(commit=False)
-        game.owner = self.request.user
-        game.save()
-        return super(CreateGameView, self).form_valid(form)
-
-
-class GameView(DetailView):
-    template_name = 'roles/game.html'
-    queryset = Game.objects.all()
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        if self.object.is_paid() or self.object.is_master(request.user):
-            return super(GameView, self).dispatch(request, *args, **kwargs)
-
-        raise Http404
-
-    def get_context_data(self, **kwargs):
-        context = super(GameView, self).get_context_data(**kwargs)
-        context['roles'] = Role.objects.filter(game=self.object).order_by('name')
-
-        if self.request.user.is_authenticated():
-            if Role.objects.filter(game=self.object, user=self.request.user).count() == 0:
-                context['free_user'] = True
-
-            if self.object.is_master(self.request.user):
-                context['can_edit'] = True
-        return context
-
-
-@class_view_decorator(login_required)
-class EditGameView(UpdateView):
-    template_name = 'roles/edit_game.html'
-    form_class = forms.GameForm
-    object = None
-    queryset = Game.objects.all()
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        if self.object.is_master(request.user):
-            return super(EditGameView, self).dispatch(request, *args, **kwargs)
-
-        raise Http404
+from roles.models import Role, RoleField, RoleConnection, Topic
 
 
 @class_view_decorator(login_required)
@@ -536,54 +446,3 @@ class ReportDualConnections(DetailView):
                 context['missing'].append(connection)
 
         return context
-
-
-###############################################################################
-# Авторизация
-
-
-class RegistrationView(TemplateView):
-    template_name = 'registration/login.html'
-
-    def get(self, request, *args, **kwargs):
-        return self.render_to_response({
-            'registration_form': forms.RegistrationForm(initial={'next': request.GET.get('next')}),
-            'login_form': forms.LoginForm(),
-        })
-
-    def post(self, request, *args, **kwargs):
-        form = forms.RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            auth.login(request, form.user)
-            next = request.POST.get('next') or form.user.get_absolute_url()
-            return HttpResponseRedirect(next)
-
-        return self.render_to_response({
-            'registration_form': form,
-            'login_form': forms.LoginForm(),
-        })
-
-
-class LoginView(TemplateView):
-    template_name = 'registration/login.html'
-
-    def get(self, request, *args, **kwargs):
-        return self.render_to_response({
-            'registration_form': forms.RegistrationForm(initial=request.GET),
-            'login_form': forms.LoginForm(initial={'next': request.GET.get('next')}),
-        })
-
-    def post(self, request, *args, **kwargs):
-        form = forms.LoginForm(request.POST)
-        if form.is_valid():
-            user = form.user
-            auth.login(request, user)
-            next = request.POST.get('next') or '/'
-            return HttpResponseRedirect(next)
-
-        registration_form = forms.RegistrationForm(initial=request.GET)
-        return self.render_to_response({
-            'registration_form': registration_form,
-            'login_form': form,
-        })

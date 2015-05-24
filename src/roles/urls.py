@@ -6,8 +6,6 @@ from roles import views
 
 urlpatterns = patterns(
     '',
-    url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^cabinet$', views.CabinetView.as_view(), name='cabinet'),
     url(r'^roles/new$', views.CreateGameView.as_view(), name='new_game'),
     url(r'^roles/(?P<pk>\d+)$', views.GameView.as_view(), name='game'),
     url(r'^roles/(?P<pk>\d+)/edit$', views.EditGameView.as_view(), name='edit_game'),
@@ -30,6 +28,4 @@ urlpatterns = patterns(
     url(r'^roles/(?P<pk>\d+)/delete', views.DeleteRoleView.as_view(), name='delete_role'),
     url(r'^roles/(?P<pk>\d+)/connections$', views.EditConnectionsView.as_view(), name='edit_role_connections'),
     url(r'^roles/(?P<pk>\d+)/new_connection$', views.AddConnectionView.as_view(), name='add_connection'),
-    url(r'^registration', views.RegistrationView.as_view(), name='registration'),
-    url(r'^login$', views.LoginView.as_view(), name='login'),
 )

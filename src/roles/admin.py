@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from django_ulogin import models as ulogin_models
 from . import models
 
 
@@ -39,7 +38,4 @@ class MessageAdmin(admin.ModelAdmin):
     raw_id_fields = ('sender', 'recipient')
 
 
-admin.site.register(models.Game, GameAdmin)
 admin.site.register(models.Role, RoleAdmin)
-admin.site.register(models.UserInfo)
-admin.site.register(ulogin_models.ULoginUser)
