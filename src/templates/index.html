@@ -4,15 +4,6 @@
 {% load ulogin_tags %}
 
 {% block content %}
-    {% if request.user.is_authenticated %}
-        привет {{ request.user.first_name|default:"незнакомец" }}
-    {% else %}
-        <table><tr>
-            <td>Hажмите на одну из этих замечательных кнопок: &nbsp;</td>
-            <td>{% ulogin_widget %}</td>
-        </tr></table>
-    {% endif %}
-
     <table style="width: 100%"><tr>
         <td >
             <h3>Мастера</h3>

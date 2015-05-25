@@ -110,6 +110,7 @@ ULOGIN_OPTIONAL = ['sex', 'phone', 'city']
 ULOGIN_PROVIDERS = ['vkontakte', 'livejournal', 'yandex', 'mailru']
 ULOGIN_HIDDEN = ['facebook', 'twitter', 'google', 'odnoklassniki', 'openid']
 ULOGIN_CREATE_USER_CALLBACK = 'users.models.create_user'
+ULOGIN_DISPLAY = 'panel'
 
 # Logging
 LOG_DIR = '/var/log/projects/cetaganda'
