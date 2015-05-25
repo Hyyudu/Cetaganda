@@ -13,26 +13,28 @@
         </tr></table>
     {% endif %}
 
-
     <table style="width: 100%"><tr>
         <td >
             <h3>Мастера</h3>
             {% content "Мастера" %}
         </td>
         <td style="width: 80%">
-            <div style="text-align: center">
-
-            <img src="{% static "cetaganda/i/index.png" %}" usemap="#Navigation"></div>
-           <p><map id="Navigation" name="Navigation">
-            <area shape="poly" coords="113,24,211,24,233,0,137,0" href="inform.html" alt="Информация">
-            <area shape="poly" coords="210,24,233,0,329,0,307,24" href="activity.html" alt="Мероприятия">
-            <area shape="poly" coords="304,24,385,24,407,0,329,0" href="depart.html" alt="Отделения">
-            <area shape="poly" coords="384,24,449,24,473,0,406,0" href="techinfo.html" alt="Техническая информация">
-            <area shape="poly" coords="449,24,501,24,525,0,473,0" href="study.html" alt="Обучение">
-            <area shape="poly" coords="501,24,560,24,583,0,525,0" href="work.html" alt="Работа">
-            <area shape="poly" coords="560,24,615,24,639,0,585,0" href="misk.html" alt="Разное">
-           </map></p>
-            </div>
+            <div style="text-align: center"><img id="imgmap" src="{% static "cetaganda/i/index.png" %}" usemap="#Navigation"></div>
+            <map id="Navigation" name="Navigation">
+                <area shape="poly" coords="110,95, 196,0, 246,35, 168,139" href="{% url "article" 3 %}" alt="Орг. инфо">
+                <area shape="poly" coords="284,140, 273,83, 400,62, 410,124" href="{% url "article" 4 %}" alt="Тексты">
+                <area shape="poly" coords="0,235, 117,217, 136,270, 28,300" href="{% url "article" 5 %}" alt="Правила">
+                <area shape="poly" coords="165,315, 106,182, 163,163, 206,304" href="{% url "article" 6 %}" alt="Космос">
+                <area shape="poly" coords="213,311, 180,167, 260,155, 277,306" href="{% url "article" 7 %}" alt="Боевка">
+                <area shape="poly" coords="287,302, 274,148, 350,139, 353,300" href="{% url "article" 8 %}" alt="Наука">
+                <area shape="poly" coords="354,300, 366,137, 438,134, 416,293" href="{% url "article" 9 %}" alt="Взломы">
+                <area shape="poly" coords="426,260, 437,188, 575,192, 571,271" href="{% url "article" 5 %}" alt="и другие...">
+                <area shape="poly" coords="86,319, 445,293, 456, 360, 102,371" href="{% url "article" 10 %}" alt="Дипломатия и секс">
+                <area shape="poly" coords="82,376, 262,376, 265,441, 75,443" href="/" alt="Заявки">
+                <area shape="poly" coords="298,407, 450,390, 460,450, 317,468" href="{% url "cabinet" %}" alt="Войти">
+                <area shape="poly" coords="106,475, 238,480, 217,536, 111,535" href="https://vk.com/cetaganda2016" alt="VK">
+                <area shape="poly" coords="232,532, 520,508, 524,576, 242,606" href="/" alt="Подать заявку">
+            </map>
         </td>
         <td>
             <h3>Новости</h3>

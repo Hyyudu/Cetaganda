@@ -4,8 +4,7 @@ from django.conf.urls import *
 
 from roles import views
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^(?P<pk>\d+)/fields$', views.GameFieldsView.as_view(), name='edit_game_fields'),
     url(r'^(?P<pk>\d+)/groups$', views.GameGroupsView.as_view(), name='edit_game_groups'),
     url(r'^(?P<pk>\d+)/topics$', views.GameTopicsView.as_view(), name='edit_game_topics'),
@@ -25,4 +24,4 @@ urlpatterns = patterns(
     url(r'^(?P<pk>\d+)/delete', views.DeleteRoleView.as_view(), name='delete_role'),
     url(r'^(?P<pk>\d+)/connections$', views.EditConnectionsView.as_view(), name='edit_role_connections'),
     url(r'^(?P<pk>\d+)/new_connection$', views.AddConnectionView.as_view(), name='add_connection'),
-)
+]
