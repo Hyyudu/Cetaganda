@@ -13,7 +13,7 @@ import os
 BASE_DIR = os.path.dirname(__file__)
 
 SECRET_KEY = '$b*5p2p#up#)gc*(m##6y(5u&(x#gurcx6lb@hwkl+l(78-g8h'
-ALLOWED_HOSTS = ['cetaganda.happy-masters.ru']
+ALLOWED_HOSTS = ['cetaganda.ru']
 DOMAIN = 'cetaganda.happy-masters.ru'
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = 'senni@mail.ru'
