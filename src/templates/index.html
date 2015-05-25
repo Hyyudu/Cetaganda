@@ -1,49 +1,41 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+{% load staticpages %}
+{% load ulogin_tags %}
 
 {% block content %}
-    <p>
-        {% if request.user.is_authenticated %}
-            Привет, <a href="{% url "cabinet" %}">{{ request.user.first_name|default:"незнакомец" }}</a>
-            <small>(<a href="{% url "logout" %}?next=/">выйти</a>)</small><br>
+    {% if request.user.is_authenticated %}
+        привет {{ request.user.first_name|default:"незнакомец" }}
+    {% else %}
+        <table><tr>
+            <td>Hажмите на одну из этих замечательных кнопок: &nbsp;</td>
+            <td>{% ulogin_widget %}</td>
+        </tr></table>
+    {% endif %}
 
-            {% if own_games %}
-                <h2>Игры, где вы мастер</h2>
-                <ul>
-                    {% for game in own_games %}
-                        <li><a href="{{ game.get_absolute_url }}">{{ game }}</a>
-                            {% if game.paid %}
-                                <button type="button" class="btn btn-success btn-xs">оплачено</button>
-                            {% else %}
-                                <button type="button" class="btn btn-danger btn-xs">не оплачено</button>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
 
-            <h2>Ваши игры</h2>
-            {% if roles %}
-                <ul>
-                    {% for role in roles %}
-                        <li><a href="{{ role.game.get_absolute_url }}">{{ role.game }}</a> -
-                            <a href="{{ role.get_absolute_url }}">{{ role }}</a></li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>Вы не заявлялись на игры</p>
-            {% endif %}
+    <table style="width: 100%"><tr>
+        <td >
+            <h3>Мастера</h3>
+            {% content "Мастера" %}
+        </td>
+        <td style="width: 80%">
+            <div style="text-align: center">
 
-        {% endif %}
-
-        <h2>Все игры</h2>
-        {% if all_games %}
-            <ul>
-                {% for game in all_games %}
-                    <li><a href="{{ game.get_absolute_url }}">{{ game }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Пока доступных игр нет</p>
-        {% endif %}
-    </p>
+            <img src="{% static "cetaganda/i/index.png" %}" usemap="#Navigation"></div>
+           <p><map id="Navigation" name="Navigation">
+            <area shape="poly" coords="113,24,211,24,233,0,137,0" href="inform.html" alt="Информация">
+            <area shape="poly" coords="210,24,233,0,329,0,307,24" href="activity.html" alt="Мероприятия">
+            <area shape="poly" coords="304,24,385,24,407,0,329,0" href="depart.html" alt="Отделения">
+            <area shape="poly" coords="384,24,449,24,473,0,406,0" href="techinfo.html" alt="Техническая информация">
+            <area shape="poly" coords="449,24,501,24,525,0,473,0" href="study.html" alt="Обучение">
+            <area shape="poly" coords="501,24,560,24,583,0,525,0" href="work.html" alt="Работа">
+            <area shape="poly" coords="560,24,615,24,639,0,585,0" href="misk.html" alt="Разное">
+           </map></p>
+            </div>
+        </td>
+        <td>
+            <h3>Новости</h3>
+        </td>
+    </tr></table>
 {% endblock %}

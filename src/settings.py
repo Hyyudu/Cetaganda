@@ -107,7 +107,7 @@ ULOGIN_FIELDS = ['first_name', 'last_name']
 ULOGIN_OPTIONAL = ['sex', 'phone', 'city']
 ULOGIN_PROVIDERS = ['vkontakte', 'livejournal', 'yandex', 'mailru']
 ULOGIN_HIDDEN = ['facebook', 'twitter', 'google', 'odnoklassniki', 'openid']
-ULOGIN_CREATE_USER_CALLBACK = 'roles.models.create_user'
+ULOGIN_CREATE_USER_CALLBACK = 'users.models.create_user'
 
 # Logging
 LOG_DIR = '/var/log/projects/cetaganda'

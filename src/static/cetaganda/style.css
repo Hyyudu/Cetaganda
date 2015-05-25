@@ -1,7 +1,38 @@
-.b-container {
-    margin: auto;
-    width: 100%;
+body {
+    margin: 0;
+    padding: 0;
 }
+
+.logo {
+    background: url("i/logo.png") no-repeat;
+    width: 256px;
+    height: 108px;
+    position: absolute;
+}
+
+.header {
+    clear: both;
+    min-height: 108px;
+}
+
+.header__text {
+    text-align: center;
+}
+
+table td {
+    vertical-align: top;
+}
+
+h3 {
+    background: url("i/button.png") no-repeat;
+    min-height: 41px;
+    min-width: 186px;
+    padding-top: 7px;
+    padding-left: 30px;
+    font-size: 100%;
+    color: white;
+}
+
 
 path.arc {
     cursor: move;
