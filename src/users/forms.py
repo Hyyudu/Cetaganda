@@ -18,19 +18,22 @@ class CabinetForm(forms.Form):
                           help_text='ваши медицинские особенности, которые надо знать организаторам.')
 
     def __init__(self, user, *args, **kwargs):
+        if not user.is_authenticated():
+            return
+
         self.user = user
         try:
-            self.userinfo = models.UserInfo.objects.get(ulogin__user=user)
+            self.userinfo = models.UserInfo.objects.get(ulogin__user=self.user)
         except models.UserInfo.DoesNotExist:
             try:
-                self.userinfo = models.UserInfo.objects.get(user=user)
+                self.userinfo = models.UserInfo.objects.get(user=self.user)
             except models.UserInfo.DoesNotExist:
-                self.userinfo = models.UserInfo.objects.create(user=user)
+                self.userinfo = models.UserInfo.objects.create(user=self.user)
         super(CabinetForm, self).__init__(*args, **kwargs)
 
-        self.initial['name'] = user.first_name
-        self.initial['family'] = user.last_name
-        self.initial['email'] = user.email
+        self.initial['name'] = self.user.first_name
+        self.initial['family'] = self.user.last_name
+        self.initial['email'] = self.user.email
         self.initial['nick'] = self.userinfo.nick
         self.initial['age'] = self.userinfo.age
         self.initial['phone'] = self.userinfo.phone
