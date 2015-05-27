@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load staticpages %}
+{% load ulogin_tags %}
+
+{% block content %}
+    <div class="inner_menu">
+    <div>
+        <table>
+            <tr>
+                <td><a href="{% url "article" 3 %}">орг. инфо</a></td>
+                <td><a href="{% url "article" 4 %}">тексты</a></td>
+                <td><a href="{% url "article" 5 %}">правила</a></td>
+                <td><a href="{% url "roles" %}">роли</a></td>
+                <td><a href="{% url "cabinet" %}">ваши данные</a></td>
+            </tr>
+        </table>
+    </div></div>
+
+    {% block inner_content %}{% endblock %}
+{% endblock %}

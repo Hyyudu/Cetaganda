@@ -15,13 +15,17 @@ from roles.decorators import class_view_decorator
 from roles.models import Role, RoleField, RoleConnection, Topic
 
 
+class RolesView(TemplateView):
+    template_name = 'roles/list.html'
+
+
 @class_view_decorator(login_required)
 class GameDescendantsView(TemplateView):
     """Редактирование подчиненных объектов игры"""
     formset = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Game, pk=kwargs['pk'])
+        self.object = get_object_or_404(Role, pk=kwargs['pk'])
 
         if self.object.is_master(request.user):
             return super(GameDescendantsView, self).dispatch(request, *args, **kwargs)
@@ -73,7 +77,7 @@ class CreateFreeRoleView(CreateView):
     form_class = forms.RoleForm
 
     def dispatch(self, request, *args, **kwargs):
-        self.game = get_object_or_404(Game, pk=kwargs['pk'])
+        self.game = get_object_or_404(Role, pk=kwargs['pk'])
 
         if not self.game.is_master(request.user):
             raise Http404
@@ -103,7 +107,7 @@ class CreateRoleView(CreateView):
     form_class = forms.RoleForm
 
     def dispatch(self, request, *args, **kwargs):
-        self.game = get_object_or_404(Game, pk=kwargs['pk'])
+        self.game = get_object_or_404(Role, pk=kwargs['pk'])
 
         if Role.objects.filter(game=self.game, user=self.request.user).count() > 0:
             raise Http404

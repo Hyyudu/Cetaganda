@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/delete', views.DeleteRoleView.as_view(), name='delete_role'),
     url(r'^(?P<pk>\d+)/connections$', views.EditConnectionsView.as_view(), name='edit_role_connections'),
     url(r'^(?P<pk>\d+)/new_connection$', views.AddConnectionView.as_view(), name='add_connection'),
+    url(r'^$', views.RolesView.as_view(), name='roles'),
 ]

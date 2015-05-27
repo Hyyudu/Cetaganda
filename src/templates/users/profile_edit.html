@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "inner.html" %}
 {% load staticpages %}
 {% load ulogin_tags %}
 {% load staticfiles %}
 
-{% block content %}
+{% block inner_content %}
     {% if request.user.is_authenticated %}
         <h1>{{ request.user.first_name|default:"незнакомец" }}: кабинет <small>(<a href="{% url "logout" %}?next=/">выйти</a>)</small></h1>
 

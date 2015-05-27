@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django import forms
-from django.forms.models import modelform_factory
 
 from roles import models
 

@@ -34,6 +34,28 @@ h3 {
     color: white;
 }
 
+.inner_menu {
+    text-align: center;
+}
+
+.inner_menu table{
+    margin: 0 auto;
+}
+
+.inner_menu td {
+    background: url("i/button.png") no-repeat;
+    height: 41px;
+    min-width: 186px;
+    text-align: left;
+    padding: 10px 0 0 30px;
+}
+
+.inner_menu a:link, .inner_menu a:active, .inner_menu a:hover, .inner_menu a:visited {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
 
 path.arc {
     cursor: move;
