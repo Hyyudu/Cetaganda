@@ -14,8 +14,10 @@ class CabinetForm(forms.Form):
     phone = forms.CharField(label='Телефон', max_length=50)
     email = forms.CharField(label='Email', max_length=50)
     city = forms.CharField(label='Город', max_length=50)
-    med = forms.CharField(label='Медицина', widget=forms.Textarea,
-                          help_text='ваши медицинские особенности, которые надо знать организаторам.')
+    med = forms.CharField(
+        label='Медицина', widget=forms.Textarea, required=False,
+        help_text='ваши медицинские особенности, которые надо знать организаторам.',
+    )
 
     def __init__(self, user, *args, **kwargs):
         if not user.is_authenticated():
