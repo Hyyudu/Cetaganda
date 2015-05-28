@@ -1,0 +1,16 @@
+{% load staticpages %}
+<li>{% if article.parent_id %}-{% endif %}
+    {% if request.META.PATH_INFO == article.get_absolute_url %}
+        {{ article.title }}
+    {% else %}
+        <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+    {% endif %}
+
+    {% if children %}
+        <ul>
+            {% for child in children %}
+                {% chapter_menu child  %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>

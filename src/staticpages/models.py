@@ -24,6 +24,12 @@ class Article(models.Model):
         else:
             return reverse('article', args=[self.id])
 
+    def get_head(self):
+        if self.parent:
+            return self.parent.get_head()
+        else:
+            return self
+
     class Meta:
         verbose_name = u"Страница"
         verbose_name_plural = u"Страницы"

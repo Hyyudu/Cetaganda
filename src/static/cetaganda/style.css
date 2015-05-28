@@ -50,10 +50,44 @@ h3 {
     padding: 10px 0 0 30px;
 }
 
+.inner_menu td.active {
+    background: url("i/button-active.png") no-repeat;
+}
+
 .inner_menu a:link, .inner_menu a:active, .inner_menu a:hover, .inner_menu a:visited {
     text-decoration: none;
     color: white;
     font-weight: bold;
+}
+
+.inner_menu .active a:link, .inner_menu .active a:active, .inner_menu .active a:hover, .inner_menu .active a:visited {
+    color: black;
+}
+
+.article {
+    width: 100%;
+}
+
+
+.article td.article_menu {
+    width: 15%;
+    padding-right: 20px;
+}
+
+.article td.article_menu ul {
+    padding-left: 0;
+    margin-left: 3px;
+}
+
+.article td.article_menu li {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 3px;
+}
+
+.article td.article_content {
+    padding-left: 20px;
+    border-left: 1px solid grey;
 }
 
 

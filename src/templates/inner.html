@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% load staticpages %}
 {% load ulogin_tags %}
 
 {% block content %}
@@ -8,11 +7,11 @@
     <div>
         <table>
             <tr>
-                <td><a href="{% url "article" 3 %}">орг. инфо</a></td>
-                <td><a href="{% url "article" 4 %}">тексты</a></td>
-                <td><a href="{% url "article" 5 %}">правила</a></td>
-                <td><a href="{% url "roles" %}">роли</a></td>
-                <td><a href="{% url "cabinet" %}">ваши данные</a></td>
+                <td {% if request.META.PATH_INFO == '/articles/3' %}class="active"{% endif %}><a href="{% url "article" 3 %}">орг. инфо</a></td>
+                <td {% if request.META.PATH_INFO == '/articles/4' %}class="active"{% endif %}><a href="{% url "article" 4 %}">тексты</a></td>
+                <td {% if request.META.PATH_INFO == '/articles/5' %}class="active"{% endif %}><a href="{% url "article" 5 %}">правила</a></td>
+                <td {% if request.META.PATH_INFO == '/roles/' %}class="active"{% endif %}><a href="{% url "roles" %}">роли</a></td>
+                <td {% if request.META.PATH_INFO == '/users/cabinet' %}class="active"{% endif %}><a href="{% url "cabinet" %}">ваши данные</a></td>
             </tr>
         </table>
     </div></div>
