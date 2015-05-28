@@ -6,6 +6,11 @@ from django.contrib import admin
 from . import models
 
 
+class GameFieldAdmin(admin.ModelAdmin):
+    list_filter = ('name', 'type', 'visibility')
+    ordering = ('order',)
+
+
 class RoleConnectionInline(admin.TabularInline):
     model = models.RoleConnection
     fk_name = 'role'
@@ -28,4 +33,7 @@ class MessageAdmin(admin.ModelAdmin):
     raw_id_fields = ('sender', 'recipient')
 
 
+admin.site.register(models.GameField, GameFieldAdmin)
+admin.site.register(models.Group)
+admin.site.register(models.Topic)
 admin.site.register(models.Role, RoleAdmin)
