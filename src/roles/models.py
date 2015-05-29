@@ -28,6 +28,9 @@ class GameField(models.Model):
     )
     required = models.BooleanField(verbose_name='Обязательное', default=False)
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         verbose_name = 'Поле игры'
         verbose_name_plural = 'Поля ролей'
@@ -64,7 +67,22 @@ class Topic(models.Model):
 
 class Role(models.Model):
     group = models.ForeignKey(Group, verbose_name='Блок', null=True, blank=True, default=None)
-    user = models.ForeignKey(AUTH_USER_MODEL, verbose_name='Пользователь', null=True, blank=True, default=None)
+    creator = models.ForeignKey(
+        AUTH_USER_MODEL, verbose_name='Создатель',
+        null=True, blank=True, default=None,
+        related_name='creator',
+    )
+    target = models.CharField(
+        verbose_name='Для кого',
+        choices=(('free', 'Свободная'), ('me', 'Для себя'), ('other', 'Для друга')),
+        default='free',
+        max_length=20,
+    )
+    user = models.ForeignKey(
+        AUTH_USER_MODEL, verbose_name='Игрок',
+        null=True, blank=True, default=None,
+        related_name='gamer',
+    )
     name = models.CharField(verbose_name='Имя', max_length=255)
     is_locked = models.BooleanField(
         verbose_name='Заморожена', default=False,
@@ -76,6 +94,33 @@ class Role(models.Model):
 
     def get_absolute_url(self):
         return reverse('role', args=[self.id])
+
+    def can_edit(self, user):
+        if user.has_perm('roles.can_edit_role'):
+            return True
+
+        if self.is_locked:
+            return False
+
+        if self.user == user:
+            return True
+
+        if not self.user and self.creator == user:
+            return True
+
+        return False
+
+    def view_level(self, user):
+        if user.has_perm('roles.can_edit_role'):
+            return 'master'
+
+        if self.user == user:
+            return 'player'
+
+        if not self.user and self.creator == user:
+            return 'player'
+
+        return 'all'
 
     def username(self):
         if not self.user:

@@ -8,127 +8,39 @@ from django.core.urlresolvers import reverse
 from django.http.response import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, FormView, UpdateView, CreateView, DetailView, DeleteView
-from django.template.response import TemplateResponse
 
 from roles import forms
 from roles.decorators import class_view_decorator
 from roles.models import Role, RoleField, RoleConnection, Topic
-
-
-class RolesView(TemplateView):
-    template_name = 'roles/list.html'
+from users.decorators import profile_required
 
 
 @class_view_decorator(login_required)
-class GameDescendantsView(TemplateView):
-    """Редактирование подчиненных объектов игры"""
-    formset = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Role, pk=kwargs['pk'])
-
-        if self.object.is_master(request.user):
-            return super(GameDescendantsView, self).dispatch(request, *args, **kwargs)
-
-        raise Http404
-
-    def get(self, request, *args, **kwargs):
-        context = {
-            'formset': self.formset(instance=self.object),
-            'object': self.object,
-        }
-        return self.render_to_response(context)
-
-    def post(self, request, *args, **kwargs):
-        context = {
-            'formset': self.formset(request.POST, instance=self.object),
-            'object': self.object,
-        }
-
-        if context['formset'].is_valid():
-            context['formset'].save()
-            return HttpResponseRedirect(reverse('game', args=[self.object.id]) + '?save=ok')
-        else:
-            return self.render_to_response(context)
-
-
-class GameFieldsView(GameDescendantsView):
-    """Редактирование полей игры"""
-    template_name = 'roles/edit_game_fields.html'
-    formset = forms.GameFieldsFormSet
-
-
-class GameGroupsView(GameDescendantsView):
-    """Редактирование блоков игры"""
-    template_name = 'roles/edit_game_groups.html'
-    formset = forms.GroupsFormSet
-
-
-class GameTopicsView(GameDescendantsView):
-    """Редактирование сюжетов игры"""
-    template_name = 'roles/edit_game_topics.html'
-    formset = forms.TopicsFormSet
-
-
-@class_view_decorator(login_required)
-class CreateFreeRoleView(CreateView):
-    """Создание свободной роли роли"""
-    template_name = 'roles/new_role.html'
-    form_class = forms.RoleForm
-
-    def dispatch(self, request, *args, **kwargs):
-        self.game = get_object_or_404(Role, pk=kwargs['pk'])
-
-        if not self.game.is_master(request.user):
-            raise Http404
-
-        if not self.game.is_paid():
-            return HttpResponse(TemplateResponse(request, 'roles/payment_required.html').render())
-
-        return super(CreateFreeRoleView, self).dispatch(request, *args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super(CreateFreeRoleView, self).get_form_kwargs()
-        kwargs['game'] = self.game
-        kwargs['request'] = self.request
-        return kwargs
+@class_view_decorator(profile_required)
+class ChooseRoleView(FormView):
+    u"""Выбор роли"""
+    template_name = 'roles/request.html'
+    form_class = forms.RequestForm
 
     def form_valid(self, form):
-        role = form.save()
-        role.game = self.game
-        role.save()
-        return super(CreateFreeRoleView, self).form_valid(form)
+        self.role = form.save(self.request.user)
+        return super(ChooseRoleView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.role.get_absolute_url()
 
 
 @class_view_decorator(login_required)
+@class_view_decorator(profile_required)
 class CreateRoleView(CreateView):
     """Создание свободной роли роли"""
     template_name = 'roles/new_role.html'
     form_class = forms.RoleForm
 
-    def dispatch(self, request, *args, **kwargs):
-        self.game = get_object_or_404(Role, pk=kwargs['pk'])
-
-        if Role.objects.filter(game=self.game, user=self.request.user).count() > 0:
-            raise Http404
-
-        if not self.game.is_paid():
-            return HttpResponse(TemplateResponse(request, 'roles/payment_required.html').render())
-
-        return super(CreateRoleView, self).dispatch(request, *args, **kwargs)
-
     def get_form_kwargs(self):
         kwargs = super(CreateRoleView, self).get_form_kwargs()
-        kwargs['game'] = self.game
         kwargs['request'] = self.request
         return kwargs
-
-    def form_valid(self, form):
-        role = form.save()
-        role.game = self.game
-        role.user = self.request.user
-        role.save()
-        return super(CreateRoleView, self).form_valid(form)
 
 
 @class_view_decorator(login_required)
@@ -138,8 +50,9 @@ class RoleView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(RoleView, self).get_context_data(**kwargs)
-        context['owner'] = self.object.game.is_master(self.request.user)
+        context['owner'] = self.request.user.has_perm('roles.can_edit_role')
         context['player'] = self.request.user == self.object.user
+        context['can_edit'] = self.object.can_edit(self.request.user)
 
         context['fields'] = RoleField.objects.filter(role=self.object)
         if not context['owner']:
@@ -148,26 +61,24 @@ class RoleView(DetailView):
             else:
                 context['fields'] = context['fields'].filter(field__visibility='all')
 
-        if context['owner'] or context['player']:
+        if context['can_edit']:
             context['connections'] = RoleConnection.objects.filter(role=self.object).order_by('role_rel__name')
 
-        context['can_edit'] = context['owner'] or self.request.user == self.object.user
         context['can_occupy'] = self.object.user is None and \
-            Role.objects.filter(game=self.object.game, user=self.request.user).count() == 0
+            not Role.objects.filter(user=self.request.user).exists()
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.GET.get('take') and \
-                self.object.user is None and \
-                Role.objects.filter(game=self.object.game, user=self.request.user).count() == 0:
+                self.object.user is None and not Role.objects.filter(user=self.request.user).exists():
             self.object.user = request.user
             self.object.save()
             return HttpResponseRedirect(self.object.get_absolute_url())
 
         if request.GET.get('free') and \
                 self.object.user is not None and \
-                self.object.game.is_master(request.user):
+                self.object.can_edit(request.user):
             self.object.user = None
             self.object.save()
             return HttpResponseRedirect(self.object.get_absolute_url())
@@ -185,7 +96,7 @@ class EditRoleView(UpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        if self.object.game.is_master(request.user) or request.user == self.object.user:
+        if self.object.can_edit(self.request.user):
             return super(EditRoleView, self).dispatch(request, *args, **kwargs)
 
         raise Http404
@@ -202,13 +113,13 @@ class DeleteRoleView(DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.object.game.is_master(self.request.user):
+        if not request.user.has_perm('roles.can_edit_role'):
             raise Http404
 
         return super(DeleteRoleView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('game', args=[self.object.game_id])
+        return '/'
 
 
 @class_view_decorator(login_required)
@@ -219,7 +130,7 @@ class EditConnectionsView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.object = get_object_or_404(Role, pk=kwargs['pk'])
 
-        if self.object.game.is_master(request.user) or request.user == self.object.user:
+        if self.object.can_edit(request.user):
             return super(EditConnectionsView, self).dispatch(request, *args, **kwargs)
 
         raise Http404

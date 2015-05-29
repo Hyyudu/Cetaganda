@@ -34,7 +34,7 @@ class RequestForm(forms.Form):
 class RoleForm(forms.ModelForm):
     class Meta:
         model = models.Role
-        fields = ('name', 'group')
+        fields = ('name', 'group', 'target')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
@@ -42,11 +42,11 @@ class RoleForm(forms.ModelForm):
 
         self.fields['group'].widget.choices = [('', '---')] + [
             (group.pk, group.name)
-            for group in models.Group.objects.filter(game=self.game)
+            for group in models.Group.objects.all()
         ]
 
         fields = models.GameField.objects.all().order_by('order')
-        if self.game.is_master(self.request.user):
+        if self.request.user.has_perm('roles.can_edit_role'):
             visibility = ('master', 'player', 'all')
         elif kwargs.get('instance') and kwargs.get('instance').user != self.request.user:
             visibility = ('all',)
@@ -78,7 +78,7 @@ class RoleForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         kwargs['commit'] = False
         role = super(RoleForm, self).save(*args, **kwargs)
-        role.game = self.game
+        role.creator = self.request.user
         role.save()
 
         for field_id, field in self.fields.items():
@@ -108,11 +108,6 @@ class DualConnectionForm(forms.Form):
         )
 
 
-GameFieldsFormSet = forms.modelform_factory(models.GameField, exclude=[])
-GroupsFormSet = forms.modelform_factory(models.Group, exclude=[])
-TopicsFormSet = forms.modelform_factory(models.Topic, exclude=[])
-
-
 class BaseConnectionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.role = kwargs.pop('role')
@@ -120,11 +115,11 @@ class BaseConnectionForm(forms.ModelForm):
 
         self.fields['role_rel'].widget.choices = [('', '-----')] + [
             (str(role.pk), role.name)
-            for role in models.Role.objects.filter(game=self.role.game).exclude(pk=self.role.pk)
+            for role in models.Role.objects.exclude(pk=self.role.pk)
         ]
         self.fields['topic'].widget.choices = [('', '-----')] + [
             (str(topic.pk), topic.name)
-            for topic in models.Topic.objects.filter(game=self.role.game)
+            for topic in models.Topic.objects.all()
         ]
 
 

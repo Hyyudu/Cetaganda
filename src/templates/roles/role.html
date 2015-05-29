@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "inner.html" %}
 {% load roles_tags %}
 
-{% block content %}
+{% block inner_content %}
     <h1>
-        Игра "<a href="{{ role.game.get_absolute_url }}">{{ role.game.title }}</a>", роль "{{ role.name }}"
+        Роль "{{ role.name }}"
         {% if player %}
             <button type="button" class="btn btn-primary btn-sm">это ваша роль</button>
         {% endif %}
@@ -13,7 +13,7 @@
 
         {% if can_edit %}
             <small>(<a href="{% url "edit_role" role.pk %}">редактировать роль</a>)
-                (<a href="{% url "edit_role_connections" role.pk %}">редактировать связи</a>)</small>
+                <!--(<a href="{% url "edit_role_connections" role.pk %}">редактировать связи</a>)--></small>
         {% endif %}
 
         {% if owner %}
@@ -21,6 +21,7 @@
         {% endif %}
     </h1>
 
+    <!--
     <p>
         {% if role.user %}Игрок - {{ role.user|nick }}
             {% if owner %}
@@ -33,6 +34,7 @@
             {% endif %}
         {% endif %}
     </p>
+    -->
 
     <table class="table table-bordered" style="width: auto;">
         {% if role.group %}

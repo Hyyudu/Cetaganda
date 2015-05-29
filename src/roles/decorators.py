@@ -4,8 +4,6 @@ from django.http.response import HttpResponse, Http404
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 
-from roles import models
-
 
 def class_view_decorator(function_decorator):
     """Convert a function based decorator into a class based decorator usable
@@ -20,21 +18,6 @@ def class_view_decorator(function_decorator):
         return View
 
     return simple_decorator
-
-
-def profile_required(f):
-    def wrapper(request, *args, **kwargs):
-        is_filled = bool(request.user.email)
-
-        userinfo = models.UserInfo.objects.get(ulogin__user=request.user)
-        for field in ('nick', 'age', 'phone', 'city', 'med'):
-            if not getattr(userinfo, field, None):
-                is_filled = False
-
-        if not is_filled:
-            return HttpResponse(TemplateResponse(request, 'profile_required.html').render())
-        return f(request, *args, **kwargs)
-    return wrapper
 
 
 def role_required(f):

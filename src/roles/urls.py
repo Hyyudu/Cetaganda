@@ -1,12 +1,13 @@
 # coding: utf-8
 
 from django.conf.urls import *
+from django.views.generic import ListView
 
-from roles import views
+from roles import views, models
 
 urlpatterns = [
-    url(r'^(?P<pk>\d+)/new_free_role$', views.CreateFreeRoleView.as_view(), name='new_free_role'),
-    url(r'^(?P<pk>\d+)/new_role$', views.CreateRoleView.as_view(), name='new_role'),
+    url(r'^choose$', views.ChooseRoleView.as_view(), name='choose_role'),
+    url(r'^request$', views.CreateRoleView.as_view(), name='new_role'),
     url(r'^(?P<pk>\d+)/reports/connections_table$', views.ReportConnectionsTable.as_view(),
         name='report_connections_table'),
     url(r'^(?P<pk>\d+)/reports/connections_diagram$', views.ReportConnectionsDiagram.as_view(),
@@ -21,5 +22,8 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/delete', views.DeleteRoleView.as_view(), name='delete_role'),
     url(r'^(?P<pk>\d+)/connections$', views.EditConnectionsView.as_view(), name='edit_role_connections'),
     url(r'^(?P<pk>\d+)/new_connection$', views.AddConnectionView.as_view(), name='add_connection'),
-    url(r'^$', views.RolesView.as_view(), name='roles'),
+    url(r'^$', ListView.as_view(
+        template_name='roles/roles.html',
+        queryset=models.Role.objects.all().order_by('name')
+    ), name='roles'),
 ]
