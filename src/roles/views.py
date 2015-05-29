@@ -12,11 +12,11 @@ from django.views.generic import TemplateView, FormView, UpdateView, CreateView,
 from roles import forms
 from roles.decorators import class_view_decorator
 from roles.models import Role, RoleField, RoleConnection, Topic
-from users.decorators import profile_required
+# from users.decorators import profile_required
 
 
 @class_view_decorator(login_required)
-@class_view_decorator(profile_required)
+# @class_view_decorator(profile_required)
 class ChooseRoleView(FormView):
     u"""Выбор роли"""
     template_name = 'roles/request.html'
@@ -31,7 +31,7 @@ class ChooseRoleView(FormView):
 
 
 @class_view_decorator(login_required)
-@class_view_decorator(profile_required)
+# @class_view_decorator(profile_required)
 class CreateRoleView(CreateView):
     """Создание свободной роли роли"""
     template_name = 'roles/new_role.html'
