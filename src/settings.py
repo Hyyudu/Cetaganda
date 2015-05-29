@@ -51,6 +51,7 @@ INSTALLED_APPS = (
 
     'django_ulogin',
     'gunicorn',
+    'pytils',
     'redactor',
     'yafotki',
 

@@ -5,9 +5,6 @@ from django.conf.urls import *
 from roles import views
 
 urlpatterns = [
-    url(r'^(?P<pk>\d+)/fields$', views.GameFieldsView.as_view(), name='edit_game_fields'),
-    url(r'^(?P<pk>\d+)/groups$', views.GameGroupsView.as_view(), name='edit_game_groups'),
-    url(r'^(?P<pk>\d+)/topics$', views.GameTopicsView.as_view(), name='edit_game_topics'),
     url(r'^(?P<pk>\d+)/new_free_role$', views.CreateFreeRoleView.as_view(), name='new_free_role'),
     url(r'^(?P<pk>\d+)/new_role$', views.CreateRoleView.as_view(), name='new_role'),
     url(r'^(?P<pk>\d+)/reports/connections_table$', views.ReportConnectionsTable.as_view(),

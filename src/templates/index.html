@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load staticpages %}
 {% load ulogin_tags %}
+{% load news %}
 
 {% block content %}
     <table style="width: 100%"><tr>
@@ -29,6 +30,7 @@
         </td>
         <td>
             <h3>Новости</h3>
+            {% last_news %}
         </td>
     </tr></table>
 {% endblock %}
