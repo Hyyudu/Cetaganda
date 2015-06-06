@@ -63,8 +63,8 @@ class Topic(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Блок в игре'
-        verbose_name_plural = 'Блоки'
+        verbose_name = 'Сюжет'
+        verbose_name_plural = 'Сюжеты'
 
 
 class Role(models.Model):
