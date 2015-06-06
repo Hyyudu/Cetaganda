@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load staticpages %}
+
+{% block content %}
+    <h1>Сравнение строк</h1>
+
+    <p>Введите две строки для сравнения</p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <p>A: <input type="text" size="150" name="a" value="{{ a }}"></p>
+        <p>B: <input type="text" size="150" name="b" value="{{ b }}"></p>
+        <input type="hidden" name="check" value="{{ check }}">
+        <p><input type="submit" value="Сравнить"></p>
+    </form>
+    <p>Результат: {{ message }}</p>
+{% endblock %}
