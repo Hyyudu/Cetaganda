@@ -17,7 +17,7 @@ ALLOWED_HOSTS = ['cetaganda.ru']
 DOMAIN = 'http://cetaganda.ru'
 INTERNAL_IPS = ('127.0.0.1',)
 
-SERVER_EMAIL = DEFAULT_FROM_EMAIL = 'senni@mail.ru'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL = 'info@cetaganda.ru'
 ADMINS = (('Glader', 'glader.ru@gmail.com'),)
 MANAGERS = (('Lina', 'linashyti@gmail.com'),)
 
