@@ -17,8 +17,10 @@ class GameField(models.Model):
     )
     name = models.CharField(verbose_name='Название', max_length=255)
     type = models.IntegerField(verbose_name='Тип поля', choices=TYPES)
-    additional = models.CharField(verbose_name='Доп инфо', max_length=255, null=True, blank=True, default=None,
-                                  help_text='Для поля вариантов - варианты через запятую')
+    additional = models.CharField(
+        verbose_name='Доп инфо', max_length=255, null=True, blank=True, default=None,
+        help_text='Для поля вариантов - варианты через запятую',
+    )
     order = models.IntegerField(verbose_name='Порядок', default=0)
     visibility = models.CharField(
         verbose_name='Уровень видимости',

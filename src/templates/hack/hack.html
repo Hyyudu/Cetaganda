@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h1>Взлом</h1>
+
+    {% if hack.result %}
+        <p>Итог: {{ hack.get_result_display }}</p>
+    {% else %}
+        <p>Идет.</p>
+    {% endif %}
+
+    {% if moves %}
+        <h2>Ходы</h2>
+        {% for move in moves %}
+            <p>{{ move.move }} ({{ move.result }})</p>
+        {% endfor %}
+    {% endif %}
+
+    {% if not hack.result %}
+        <p>Ваш ход: {{ error }}
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="text" name="number">
+            <input type="submit" name="action" value="Попробовать">
+        </form>
+        <br>
+        <form action="" method="POST" onsubmit="return confirm('Вы уверены, что хотите прервать взлом?')">
+            {% csrf_token %}
+            <input type="submit" name="action" value="Сбежать">
+        </form>
+        </p>
+    {% endif %}
+
+{% endblock %}
