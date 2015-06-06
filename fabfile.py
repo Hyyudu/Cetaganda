@@ -25,6 +25,7 @@ def init():
     with settings(user='root'):
         append('/etc/apt/sources.list', 'deb-src http://archive.ubuntu.com/ubuntu precise main')
         append('/etc/apt/sources.list', 'deb-src http://archive.ubuntu.com/ubuntu precise-updates main')
+        append('/etc/apt/sources.list', 'deb http://nginx.org/packages/ubuntu/ precise nginx')
 
         run('apt-get update')
         run('apt-get upgrade -y')

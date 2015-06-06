@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(__file__)
 
 SECRET_KEY = '$b*5p2p#up#)gc*(m##6y(5u&(x#gurcx6lb@hwkl+l(78-g8h'
 ALLOWED_HOSTS = ['cetaganda.ru']
-DOMAIN = 'http://cetaganda.ru'
+DOMAIN = 'https://cetaganda.ru'
 INTERNAL_IPS = ('127.0.0.1',)
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = 'info@cetaganda.ru'
