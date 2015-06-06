@@ -57,6 +57,7 @@ INSTALLED_APPS = (
 
     'hack',
     'news',
+    'post_logger',
     'roles',
     'science',
     'staticpages',
@@ -71,6 +72,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'post_logger.middleware.LogPostData',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -141,6 +143,12 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'traceback.log'),
             'formatter': 'verbose',
         },
+        'post_log': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'post.log'),
+            'formatter': 'verbose',
+        },
         'mail_admin': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -151,6 +159,11 @@ LOGGING = {
             'handlers': ['mail_admin', 'file'],
             'level': 'WARNING',
             'propagate': True,
+        },
+        'post': {
+            'handlers': ['post_log'],
+            'level': 'INFO',
+            'propagate': False,
         },
     }
 }
