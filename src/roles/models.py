@@ -116,10 +116,10 @@ class Role(models.Model):
         if user.has_perm('roles.can_edit_role'):
             return 'master'
 
-        if self.user == user:
+        if self.user == user and self.is_locked:
             return 'player'
 
-        if not self.user and self.creator == user:
+        if self.creator == user and not self.is_locked:
             return 'player'
 
         return 'all'
