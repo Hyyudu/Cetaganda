@@ -16,6 +16,7 @@ SECRET_KEY = '$b*5p2p#up#)gc*(m##6y(5u&(x#gurcx6lb@hwkl+l(78-g8h'
 ALLOWED_HOSTS = ['cetaganda.ru']
 DOMAIN = 'https://cetaganda.ru'
 INTERNAL_IPS = ('127.0.0.1',)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = 'info@cetaganda.ru'
 ADMINS = (('Glader', 'glader.ru@gmail.com'),)
