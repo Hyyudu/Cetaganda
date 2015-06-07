@@ -26,7 +26,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static')
 STATIC_URL = '/static/'
 
-LOGIN_URL = '/registration'
+LOGIN_URL = '/users/cabinet'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
