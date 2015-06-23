@@ -1,0 +1,31 @@
+# http://lint.travis-ci.org/glader/Uralcon
+
+language: python
+
+python:
+  - "2.7"
+  - "pypy"
+
+env:
+  - DJANGO=Django==1.8.2
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev
+
+install:
+  - pip install pep8
+  - pip install https://github.com/dcramer/pyflakes/tarball/master
+  - pip install -r requirements_test.txt
+  - pip install $DJANGO
+
+before_script:
+  - "pep8 --exclude=migrations --ignore=E501,E225,E125,E128,E131 src"
+  - pyflakes -x W src
+
+script:
+  - cd src && py.test  --ds=testing_settings
+
+notifications:
+  email:
+    - glader.ru@gmail.com
