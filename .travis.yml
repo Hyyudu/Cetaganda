@@ -24,7 +24,7 @@ before_script:
   - pyflakes -x W src
 
 script:
-  - cd src && py.test  --ds=testing_settings
+  - cd src && py.test --ds=testing_settings
 
 notifications:
   email:
