@@ -1,5 +1,5 @@
 django-ulogin==0.2.3
-django-wysiwyg-redactor==0.4.8
+django-wysiwyg-redactor==0.4.8.1
 Django==1.8.2
 django_yafotki==0.7.3
 easywebdav==1.2.0
