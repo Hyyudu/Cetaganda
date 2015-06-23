@@ -1,17 +1,62 @@
 {% extends "base.html" %}
 {% load staticpages %}
+{% load staticfiles %}
 
 {% block content %}
-    <h1>Сравнение строк</h1>
-
-    <p>Введите две строки для сравнения</p>
-
+    <h2>Ваши запасы</h2>
+    <p>На данный момент у вас имеется</p>
+    <table class="bordered" style="float: left;margin-right: 20px;">
+        {% for item, value in store.items %}
+            <tr>
+                <td>{{ item }}</td><td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
     <form action="" method="POST">
+        Добавить ресурсов
         {% csrf_token %}
-        <p>A: <input type="text" size="150" name="a" value="{{ a }}"></p>
-        <p>B: <input type="text" size="150" name="b" value="{{ b }}"></p>
-        <input type="hidden" name="check" value="{{ check }}">
-        <p><input type="submit" value="Сравнить"></p>
+        {{ store_form }}
+        <input type="hidden" name="action" value="store">
+        <input type="submit" value="Сохранить">
     </form>
-    <p>Результат: {{ message }}</p>
+    <div style="clear: left"></div>
+
+    <h2>Архив разработок</h2>
+    <p>Жирным выделены реализованные изобретения, которые вы можете выставлять на биржу и использовать сами.</p>
+
+    <table class="bordered">
+        <tr>
+            <th>Название</th>
+            <th>Действие</th>
+            <th>Стоимость</th>
+        </tr>
+        {% for invention in inventions %}
+            <tr>
+                <td><a href="{% url "science_invention" invention.hash %}" {% if invention.action %}style="font-weight: bold"{% endif %}>{{ invention.name }}</a></td>
+                <td>{{ invention.action|default:'-' }}</td>
+                <td>{{ invention.cost }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="{% url "science_create_invention" %}">Создать новое изобретение</a>.</p>
+
+    <h2>Готовые изделия</h2>
+    <table class="bordered">
+        <tr>
+            <th>Название</th>
+            <th>Действие</th>
+            <th>Код</th>
+            <th>Цель</th>
+        </tr>
+        {% for production in productions %}
+            <tr>
+                <td>{{ production.invention.name }}</td>
+                <td>{{ production.invention.action|default:'-' }}</td>
+                <td>{{ production.hash }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+    </table>
+
 {% endblock %}

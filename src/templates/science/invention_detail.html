@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticpages %}
+{% load staticfiles %}
+
+{% block content %}
+    <h1><a href="{% url "science_index" %}">Наука</a> &gt; Карта изобретения</h1>
+    <p>
+        <em>Основа</em><br>
+        {{ object.base_coded }}<br>
+        <strong>{{ object.base }}</strong>
+    </p>
+
+    <p>
+        <em>Изменение</em><br>
+        {{ object.change_coded }}<br>
+        <strong>{{ object.change }}</strong>
+    </p>
+
+    <p>Стоимость: {{ object.cost }}.</p>
+
+    <p>{% if object.action %}
+        Действие: {{ object.action }}
+
+        <h2>Производство</h2>
+        {% if object.enough_store %}
+            <form action="" method="POST">{% csrf_token %}<input type="submit" value="Произвести изделие"></form>
+        {% else %}
+            Ваших средств недостаточно для того, чтобы изготовить изделие.
+        {% endif %}
+
+    {% else %}
+        Не зачиповано.
+        {% if request.user.is_superuser %}<a href="/admin/science/invention/{{ object.id }}">Зачиповать</a>{% endif %}
+    {% endif %}
+    </p>
+{% endblock %}

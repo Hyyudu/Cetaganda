@@ -76,7 +76,7 @@ class Role(models.Model):
     )
     target = models.CharField(
         verbose_name='Для кого',
-        choices=(('free', 'Свободная'), ('me', 'Для себя'), ('other', 'Для друга')),
+        choices=(('free', 'Свободная'), ('me', 'Для себя'), ('other', 'Для друга'), ('fake', 'Временная')),
         default='free',
         max_length=20,
     )

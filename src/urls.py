@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^news/', include('news.urls')),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^roles/', include('roles.urls')),
-    url(r'^science', include('science.urls')),
+    url(r'^science/', include('science.urls')),
     url(r'^ulogin/', include('django_ulogin.urls')),
     url(r'^users/', include('users.urls')),
 

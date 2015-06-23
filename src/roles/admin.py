@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from . import models
+from roles import models
 
 
 class GameFieldAdmin(admin.ModelAdmin):

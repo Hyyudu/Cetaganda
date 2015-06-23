@@ -15,4 +15,9 @@ class GetUserRole(object):
                 request.role_locked = request.role.is_locked
 
             except Role.DoesNotExist:
-                pass
+                request.role = Role.objects.create(
+                    user=request.user,
+                    creator=request.user,
+                    target='fake',
+                    name=unicode(request.user)
+                )

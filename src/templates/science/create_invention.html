@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load staticpages %}
+{% load staticfiles %}
+
+{% block content %}
+    <h2><a href="{% url "science_index" %}">Наука</a> &gt; Расчет изобретения</h2>
+    <p><img src="{% static "science/i/morze-b.jpg" %}"></p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <p><strong>Введите данные на основе</strong>
+            (Н-тире, н-точка, р-пробел между буквами, рр - пробел между словами)<br>
+            Вы можете вставить по одному пробелу в начале и в конце фразы</p>
+        {{ form.base_coded }}
+        {% if form.errors.base_coded %}
+           <p>{{ form.errors.base_coded }}</p>
+        {% endif %}
+
+        <p>Текст получившейся фразы: {{ form.cleaned_data.base }}</p>
+
+        <p><strong>Введите данные на изменениям</strong>
+            (З, К, С, Ж - тире, з, к, с, ж - точка, б - пробел между буквами, бб - пробел между словами)</p>
+        <p><em>
+            Зеленое (З, з) - лечение, восстановление, развитие<br>
+            Красное (К, к) - разрушение, выделение, замедление<br>
+            Синее (С, с) - защита, сохранение, присоединение<br>
+            Желтое (Ж, ж) - движение, перемещение, распространение<br>
+            Вы можете вставить по одному пробелу в начале и в конце фразы
+        </em></p>
+        {{ form.change_coded }}
+        {% if form.errors.base_coded %}
+           <p>{{ form.errors.base_coded }}</p>
+        {% endif %}
+
+        <p>Текст получившейся фразы: {{ form.cleaned_data.change }}</p>
+
+        {% if form.errors.change_coded %}
+           <p>{{ form.errors.change_coded }}</p>
+        {% endif %}
+        <input type="submit" name="action" value="Проверить">
+
+        {% if form.non_field_errors %}
+           <p>{{ form.non_field_errors }}</p>
+        {% endif %}
+
+        <p>Введите название: {{ form.name }}</p>
+        <input type="submit" name="action" value="Запомнить">
+    </form>
+{% endblock %}

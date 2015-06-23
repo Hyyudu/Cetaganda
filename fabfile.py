@@ -170,7 +170,7 @@ def run_local():
 def local_env():
     with settings(warn_only=True):
         local('c:\\python\\python virtualenv.py ENV --system-site-packages')
-    local('ENV\\Scripts\\pip install -r requirements.txt ')
+    local('ENV\\Scripts\\pip install -r requirements_test.txt')
 
 
 def local_static():
@@ -189,3 +189,7 @@ def local_migrate():
     with settings(warn_only=True):
         local('cd src && ..\\ENV\\Scripts\\python manage.py makemigrations')
     local('cd src && ..\\ENV\\Scripts\\python manage.py migrate')
+
+
+def local_test():
+    local('cd src && ..\\ENV\\Scripts\\py.test --ds=testing_settings')

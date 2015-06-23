@@ -24,6 +24,17 @@ table td {
     vertical-align: top;
 }
 
+table.bordered {
+    border-collapse: collapse;
+}
+
+table.bordered td, table.bordered th {
+    border-collapse: collapse;
+    border: 1px solid black;
+    margin: 0;
+    padding: 5px 10px 3px 3px;
+}
+
 h3 {
     background: url("i/button.png") no-repeat;
     min-height: 41px;
