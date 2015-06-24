@@ -13,7 +13,7 @@
     <form action="" method="POST">
         {% csrf_token %}
         <p><strong>Введите данные на основе</strong>
-            (Н-тире, н-точка, р-пробел между буквами, рр - пробел между словами)<br>
+            (Н-тире, н-точка, б-пробел между буквами, бб - пробел между словами)<br>
             Вы можете вставить по одному пробелу в начале и в конце фразы</p>
         {{ form.base_coded }} <strong><span id="base_coded_len">0</span></strong>
         {% if form.errors.base_coded %}
