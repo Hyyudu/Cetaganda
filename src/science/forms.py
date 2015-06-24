@@ -127,7 +127,7 @@ class InventionForm(forms.Form):
         if self.errors:
             return
 
-        if abs(len(self.cleaned_data['change']) - len(self.cleaned_data['base'])) > 2:
+        if abs(len(self.cleaned_data['change_coded']) - len(self.cleaned_data['base_coded'])) > 2:
             raise forms.ValidationError('Длина строк отличается больше чем на два символа.')
 
         return self.cleaned_data
