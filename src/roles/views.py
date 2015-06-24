@@ -15,6 +15,19 @@ from roles.models import Role, RoleField, RoleConnection, Topic
 # from users.decorators import profile_required
 
 
+class RolesView(TemplateView):
+    template_name = 'roles/roles.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RolesView, self).get_context_data(**kwargs)
+        context['roles'] = Role.objects.exclude(target='fake').order_by('name')
+        for role in context['roles']:
+            role.rolefields = RoleField.objects.filter(role=role, field__show_in_list=True, field__visibility='all')\
+                .order_by('field__order')
+
+        return context
+
+
 @class_view_decorator(login_required)
 # @class_view_decorator(profile_required)
 class ChooseRoleView(FormView):
@@ -54,7 +67,7 @@ class RoleView(DetailView):
         context['player'] = self.request.user == self.object.user
         context['can_edit'] = self.object.can_edit(self.request.user)
 
-        context['fields'] = RoleField.objects.filter(role=self.object)
+        context['fields'] = RoleField.objects.filter(role=self.object).order_by('field__order')
         if not context['owner']:
             if context['player']:
                 context['fields'] = context['fields'].filter(field__visibility__in=('player', 'all'))

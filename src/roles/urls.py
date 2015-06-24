@@ -1,9 +1,8 @@
 # coding: utf-8
 
 from django.conf.urls import *
-from django.views.generic import ListView
 
-from roles import views, models
+from roles import views
 
 urlpatterns = [
     url(r'^choose$', views.ChooseRoleView.as_view(), name='choose_role'),
@@ -22,8 +21,5 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/delete', views.DeleteRoleView.as_view(), name='delete_role'),
     url(r'^(?P<pk>\d+)/connections$', views.EditConnectionsView.as_view(), name='edit_role_connections'),
     url(r'^(?P<pk>\d+)/new_connection$', views.AddConnectionView.as_view(), name='add_connection'),
-    url(r'^$', ListView.as_view(
-        template_name='roles/roles.html',
-        queryset=models.Role.objects.all().order_by('name')
-    ), name='roles'),
+    url(r'^$', views.RolesView.as_view(), name='roles'),
 ]

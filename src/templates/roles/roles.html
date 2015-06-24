@@ -5,9 +5,12 @@
     <h1>Роли</h1>
 
     <table class="roles">
-        {% for role in object_list %}
+        {% for role in roles %}
             <tr class="{% cycle 'tr_odd' 'tr_even' %}">
                 <td><a href="{% url "role" role.id %}">{{ role.name }}</a></td>
+                {% for field in role.rolefields %}
+                    <td>{{ field.get_value }}</td>
+                {% endfor %}
             </tr>
         {% endfor %}
     </table>

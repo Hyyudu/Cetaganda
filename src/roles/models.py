@@ -29,6 +29,7 @@ class GameField(models.Model):
         default='all',
     )
     required = models.BooleanField(verbose_name='Обязательное', default=False)
+    show_in_list = models.BooleanField(verbose_name='Отображать в списке ролей', default=False)
 
     def __unicode__(self):
         return self.name

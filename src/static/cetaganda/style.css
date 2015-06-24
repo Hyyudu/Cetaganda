@@ -35,6 +35,23 @@ table.bordered td, table.bordered th {
     padding: 5px 10px 3px 3px;
 }
 
+
+.roles {
+    border-collapse: collapse;
+    border: 1px solid grey;
+}
+
+.roles td {
+    padding: 3px 10px 5px 3px;
+    margin: 0;
+    vertical-align: top;
+    border-bottom: 1px solid grey;
+}
+
+.roles .tr_even {
+    background-color: #f0f0f0;
+}
+
 h3 {
     background: url("i/button.png") no-repeat;
     min-height: 41px;

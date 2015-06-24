@@ -7,6 +7,7 @@ from roles import models
 
 
 class GameFieldAdmin(admin.ModelAdmin):
+    list_display = ('name', 'visibility')
     list_filter = ('name', 'type', 'visibility')
     ordering = ('order',)
 
@@ -24,7 +25,7 @@ class RoleFieldInline(admin.TabularInline):
 
 
 class RoleAdmin(admin.ModelAdmin):
-    list_display = ('username',)
+    list_display = ('name', 'username', 'target')
     inlines = (RoleFieldInline, RoleConnectionInline,)
 
 
