@@ -12,13 +12,26 @@
             </tr>
         {% endfor %}
     </table>
+    <p>
     <form action="" method="POST">
-        Добавить ресурсов
+        Добавить ресурсов<br>
         {% csrf_token %}
         {{ store_form }}
         <input type="hidden" name="action" value="store">
         <input type="submit" value="Сохранить">
     </form>
+    </p>
+
+    <p>
+    <form action="" method="POST">
+        Передать ресурс<br>
+        {% csrf_token %}
+        {{ transfer_form }}
+        <input type="hidden" name="action" value="transfer">
+        <input type="submit" value="Отправить">
+    </form>
+    </p>
+
     <div style="clear: left"></div>
 
     <h2>Архив разработок</h2>

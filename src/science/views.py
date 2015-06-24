@@ -19,12 +19,8 @@ class IndexView(TemplateView):
         context['inventions'] = self.request.role.invention_set.all().order_by('pk')
         context['productions'] = self.request.role.production_set.all().order_by('pk')
         context['store_form'] = forms.StoreForm()
-
-        try:
-            store = self.request.role.store
-        except models.Store.DoesNotExist:
-            store = models.Store.objects.create(owner=self.request.role, goods={})
-        context['store'] = store
+        context['transfer_form'] = forms.TransferForm(self.request.role)
+        context['store'] = models.Store.get_or_create(self.request.role)
 
         return context
 
@@ -32,11 +28,18 @@ class IndexView(TemplateView):
         context = self.get_context_data()
 
         if request.POST.get('action') == 'store':
-            form = forms.StoreForm(request.POST)
-            if form.is_valid():
-                form.save(context['store'])
+            context['store_form'] = forms.StoreForm(request.POST)
+            if context['store_form'].is_valid():
+                context['store_form'].save(context['store'])
+                return HttpResponseRedirect(reverse('science_index'))
 
-        return HttpResponseRedirect(reverse('science_index'))
+        if request.POST.get('action') == 'transfer':
+            context['transfer_form'] = forms.TransferForm(self.request.role, request.POST)
+            if context['transfer_form'].is_valid():
+                context['transfer_form'].save()
+                return HttpResponseRedirect(reverse('science_index'))
+
+        return self.render_to_response(context)
 
 
 @class_view_decorator(role_required)

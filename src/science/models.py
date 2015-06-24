@@ -59,6 +59,13 @@ class Store(models.Model):
     def __unicode__(self):
         return unicode(self.owner)
 
+    @classmethod
+    def get_or_create(cls, role):
+        try:
+            return role.store
+        except cls.DoesNotExist:
+            return cls.objects.create(owner=role, goods={})
+
     class Meta:
         verbose_name = 'Склад'
         verbose_name_plural = 'Склад'

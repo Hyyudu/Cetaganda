@@ -5,13 +5,15 @@ from uuid import uuid4
 
 from django import forms
 
+from roles.models import Role
+
 from science import models
 from science.utils import translate
 
 
 class StoreForm(forms.Form):
-    resource = forms.CharField(label='', widget=forms.Select)
-    amount = forms.IntegerField(label='')
+    resource = forms.CharField(label='', widget=forms.Select, required=True)
+    amount = forms.IntegerField(label='', required=True)
 
     def __init__(self, *args, **kwargs):
         super(StoreForm, self).__init__(*args, **kwargs)
@@ -23,13 +25,66 @@ class StoreForm(forms.Form):
 
     def save(self, store):
         store.goods[self.cleaned_data['resource']] = \
-            store.goods.get(self.cleaned_data['resource'], 0) + int(self.cleaned_data['amount'])
+            store.goods.get(self.cleaned_data['resource'], 0) + self.cleaned_data['amount']
         store.save()
 
 
+class TransferForm(forms.Form):
+    role = forms.IntegerField(label='Кому', widget=forms.Select, required=True)
+    resource = forms.CharField(label='', widget=forms.Select, required=True)
+    amount = forms.IntegerField(label='', required=True)
+
+    def __init__(self, sender, *args, **kwargs):
+        self.sender = sender
+        super(TransferForm, self).__init__(*args, **kwargs)
+
+        self.fields['resource'].widget.choices = [
+            (letter, letter)
+            for letter in 'бЗзКкСсЖж'
+        ]
+
+        self.fields['role'].widget.choices = [
+            (role.id, role.name)
+            for role in Role.objects.exclude(pk=sender.pk)
+        ]
+
+    def clean_role(self):
+        try:
+            return Role.objects.get(pk=self.cleaned_data['role'])
+        except Role.DoesNotExist:
+            raise forms.ValidationError('Неизвестная роль')
+
+    def clean_amount(self):
+        if self.cleaned_data['amount'] <= 0:
+            raise forms.ValidationError('Количество ресурса должно быть положительным')
+        return self.cleaned_data['amount']
+
+    def clean(self):
+        if self.errors:
+            return
+
+        sender_store = models.Store.get_or_create(self.sender)
+        if sender_store.goods.get(self.cleaned_data['resource']) < self.cleaned_data['amount']:
+            raise forms.ValidationError('У вас недостаточно ресурсов этого типа для передачи')
+        return self.cleaned_data
+
+    def save(self):
+        sender_store = models.Store.get_or_create(self.sender)
+        sender_store.goods[self.cleaned_data['resource']] = \
+            sender_store.goods.get(self.cleaned_data['resource'], 0) - self.cleaned_data['amount']
+        sender_store.save()
+
+        recipient_store = models.Store.get_or_create(self.cleaned_data['role'])
+        recipient_store.goods[self.cleaned_data['resource']] = \
+            recipient_store.goods.get(self.cleaned_data['resource'], 0) + self.cleaned_data['amount']
+        recipient_store.save()
+
+
 class InventionForm(forms.Form):
-    base_coded = forms.CharField(label='База', widget=forms.TextInput(attrs={'style': 'width: 800px;'}))
-    change_coded = forms.CharField(label='Изменение', widget=forms.TextInput(attrs={'style': 'width: 800px;'}))
+    base_coded = forms.CharField(label='База', widget=forms.TextInput(attrs={'style': 'width: 800px;'}), required=True)
+    change_coded = forms.CharField(
+        label='Изменение', widget=forms.TextInput(attrs={'style': 'width: 800px;'}), required=True
+    )
     name = forms.CharField(label='Название', required=False)
 
     def clean_base_coded(self):
