@@ -5,11 +5,12 @@ from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect, Http404
 from django.views.generic import TemplateView, FormView, DetailView
 
-from roles.decorators import class_view_decorator, role_required
+from roles.decorators import class_view_decorator, login_required, role_required
 
 from science import models, forms
 
 
+@class_view_decorator(login_required)
 @class_view_decorator(role_required)
 class IndexView(TemplateView):
     template_name = 'science/index.html'
@@ -42,6 +43,7 @@ class IndexView(TemplateView):
         return self.render_to_response(context)
 
 
+@class_view_decorator(login_required)
 @class_view_decorator(role_required)
 class CreateInventionView(FormView):
     template_name = 'science/create_invention.html'
@@ -55,11 +57,13 @@ class CreateInventionView(FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+@class_view_decorator(login_required)
 @class_view_decorator(role_required)
 class CreateProductionView(TemplateView):
     template_name = 'science/index.html'
 
 
+@class_view_decorator(login_required)
 @class_view_decorator(role_required)
 class InventionView(DetailView):
     queryset = models.Invention.objects.all()

@@ -20,6 +20,14 @@ def class_view_decorator(function_decorator):
     return simple_decorator
 
 
+def login_required(f):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponse(TemplateResponse(request, 'login_required.html').render())
+        return f(request, *args, **kwargs)
+    return wrapper
+
+
 def role_required(f):
     def wrapper(request, *args, **kwargs):
         if not getattr(request, 'role', None) or not request.role:
