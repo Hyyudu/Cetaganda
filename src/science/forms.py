@@ -81,7 +81,9 @@ class TransferForm(forms.Form):
 
 
 class InventionForm(forms.Form):
-    base_coded = forms.CharField(label='База', widget=forms.TextInput(attrs={'style': 'width: 800px;'}), required=True)
+    base_coded = forms.CharField(
+        label='Основа', widget=forms.TextInput(attrs={'style': 'width: 800px;'}), required=True
+    )
     change_coded = forms.CharField(
         label='Изменение', widget=forms.TextInput(attrs={'style': 'width: 800px;'}), required=True
     )
@@ -92,18 +94,18 @@ class InventionForm(forms.Form):
 
         for c in self.cleaned_data['base_coded']:
             if c not in 'нНб':
-                raise forms.ValidationError('База должна состоять из символов н, Н, б.')
+                raise forms.ValidationError('Основа должна состоять из символов н, Н, б.')
 
         if self.cleaned_data['base_coded'].startswith('бб'):
-            raise forms.ValidationError('База не может начинаться с "бб"')
+            raise forms.ValidationError('Основа не может начинаться с "бб"')
         if self.cleaned_data['base_coded'].endswith('бб'):
-            raise forms.ValidationError('База не может заканчиваться на "бб"')
+            raise forms.ValidationError('Основа не может заканчиваться на "бб"')
 
         try:
             self.cleaned_data['base'] = translate(self.cleaned_data['base_coded']).capitalize()
             return self.cleaned_data['base_coded']
         except ValueError:
-            raise forms.ValidationError('База не распознана')
+            raise forms.ValidationError('Основа не распознана')
 
     def clean_change_coded(self):
         self.cleaned_data['change_coded'] = self.cleaned_data['change_coded'].strip()
@@ -113,9 +115,9 @@ class InventionForm(forms.Form):
                 raise forms.ValidationError('Изменение должно состоять из символов б, З, з, К, к, С, с, Ж, ж.')
 
         if self.cleaned_data['change_coded'].startswith('бб'):
-            raise forms.ValidationError('Основание не может начинаться с "бб"')
+            raise forms.ValidationError('Изменение не может начинаться с "бб"')
         if self.cleaned_data['change_coded'].endswith('бб'):
-            raise forms.ValidationError('Основание не может заканчиваться на "бб"')
+            raise forms.ValidationError('Изменение не может заканчиваться на "бб"')
 
         try:
             self.cleaned_data['change'] = translate(self.cleaned_data['change_coded']).capitalize()

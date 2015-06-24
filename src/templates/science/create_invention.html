@@ -32,8 +32,8 @@
             Вы можете вставить по одному пробелу в начале и в конце фразы
         </em></p>
         {{ form.change_coded }} <strong><span id="change_coded_len">0</span></strong>
-        {% if form.errors.base_coded %}
-           <p>{{ form.errors.base_coded }}</p>
+        {% if form.errors.change_coded %}
+           <p>{{ form.errors.change_coded }}</p>
         {% endif %}
 
         <p>Текст получившейся фразы: {{ form.cleaned_data.change }}</p>
