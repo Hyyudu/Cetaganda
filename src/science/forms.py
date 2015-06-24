@@ -91,13 +91,13 @@ class InventionForm(forms.Form):
         self.cleaned_data['base_coded'] = self.cleaned_data['base_coded'].strip()
 
         for c in self.cleaned_data['base_coded']:
-            if c not in 'нНр':
-                raise forms.ValidationError('База должна состоять из символов н, Н, р.')
+            if c not in 'нНб':
+                raise forms.ValidationError('База должна состоять из символов н, Н, б.')
 
-        if self.cleaned_data['base_coded'].startswith('рр'):
-            raise forms.ValidationError('База не может начинаться с "рр"')
-        if self.cleaned_data['base_coded'].endswith('рр'):
-            raise forms.ValidationError('База не может заканчиваться на "рр"')
+        if self.cleaned_data['base_coded'].startswith('бб'):
+            raise forms.ValidationError('База не может начинаться с "бб"')
+        if self.cleaned_data['base_coded'].endswith('бб'):
+            raise forms.ValidationError('База не может заканчиваться на "бб"')
 
         try:
             self.cleaned_data['base'] = translate(self.cleaned_data['base_coded']).capitalize()
