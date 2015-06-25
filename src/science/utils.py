@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 letters = {
-    'A': '.-',
+    'А': '.-',
     'Б': '-...',
     'В': '.--',
     'Г': '--.',
