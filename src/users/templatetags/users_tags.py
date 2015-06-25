@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django import template
 from django.db.models import Q
 
-from roles import models
+from users import models
 
 register = template.Library()
 
