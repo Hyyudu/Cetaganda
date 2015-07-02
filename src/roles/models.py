@@ -76,7 +76,7 @@ class Role(models.Model):
         related_name='creator',
     )
     target = models.CharField(
-        verbose_name='Для кого',
+        verbose_name='Для кого заполняете заявку',
         choices=(('free', 'Свободная'), ('me', 'Для себя'), ('other', 'Для друга'), ('fake', 'Временная')),
         default='free',
         max_length=20,
