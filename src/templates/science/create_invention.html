@@ -38,9 +38,6 @@
 
         <p>Текст получившейся фразы: {{ form.cleaned_data.change }}</p>
 
-        {% if form.errors.change_coded %}
-           <p>{{ form.errors.change_coded }}</p>
-        {% endif %}
         <input type="submit" name="action" value="Проверить">
 
         {% if form.non_field_errors %}

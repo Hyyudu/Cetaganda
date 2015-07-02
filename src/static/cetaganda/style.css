@@ -52,6 +52,11 @@ table.bordered td, table.bordered th {
     background-color: #f0f0f0;
 }
 
+.errorlist {
+    color: red;
+    font-weight: bold;
+}
+
 h3 {
     background: url("i/button.png") no-repeat;
     min-height: 41px;
