@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import random
+import uuid
 
 from django.db import models
 
+from roles.models import Role
+
 
 class Duel(models.Model):
+    owner = models.ForeignKey(Role, verbose_name='Запустивший')
     role_1 = models.CharField(verbose_name='Игрок 1', max_length=100)
     role_2 = models.CharField(verbose_name='Игрок 2', max_length=100)
     email_1 = models.CharField(verbose_name='Email 1', max_length=100)
@@ -67,6 +71,59 @@ class DuelMove(models.Model):
     class Meta:
         verbose_name = 'Ход дуэли'
         verbose_name_plural = 'Ходы дуэлей'
+
+
+class Target(models.Model):
+    TARGETS = (
+        ('role.credits', 'Персонаж: кража 10 кредитов'),
+        ('role.official', 'Персонаж: официальное досье'),
+        ('role.personal', 'Персонаж: профессиональные особенности'),
+        ('role.messages', 'Персонаж: переписка'),
+        ('role.info', 'Персонаж: Личное дело'),
+        ('role.defence', 'Персонаж: Список защит'),
+        ('corporation.book', 'Корпорация: гостевая книга'),
+        ('corporation.money', 'Корпорация: сумма на счету'),
+        ('corporation.docslist', 'Корпорация: список документов'),
+        ('corporation.doc', 'Корпорация: кража/изменение документа'),
+    )
+    role = models.ForeignKey(Role, verbose_name='Роль', null=True, blank=True, default=None, related_name='targets')
+    target = models.CharField(verbose_name='Цель', max_length=50, choices=TARGETS)
+
+    def get_levels(self):
+        floats = self.floats.filter(is_active=True)
+        return sorted(list(set(float.target_level for float in floats)))
+    get_levels.short_description = 'Уровни защиты'
+
+    def __unicode__(self):
+        return self.target
+
+    class Meta:
+        verbose_name = 'Цель атаки'
+        verbose_name_plural = 'Цели атак'
+
+
+class Float(models.Model):
+    owner = models.ForeignKey(Role, verbose_name='Роль', related_name='floats')
+    hash = models.CharField(verbose_name='Хэш', max_length=32)
+    target = models.ForeignKey(
+        Target,
+        verbose_name='Защищает',
+        null=True, blank=True, default=None,
+        related_name='floats'
+    )
+    target_level = models.PositiveIntegerField(verbose_name='Уровень защиты', null=True, blank=True, default=None)
+    is_active = models.BooleanField(verbose_name='Активен', default=True)
+
+    @classmethod
+    def create(cls, owner):
+        return cls.objects.create(
+            owner=owner,
+            hash=uuid.uuid4().hex[:8],
+        )
+
+    class Meta:
+        verbose_name = 'Поплавок'
+        verbose_name_plural = 'Поплавки'
 
 
 class Hack(models.Model):

@@ -1,0 +1,13 @@
+{% extends "hack/base.html" %}
+
+{% block hack_content %}
+    <h2>Новый взлом</h2>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ hack_form.as_p }}
+        <input type="submit" value="Начать взлом">
+    </form>
+
+    <br>
+    <h2>История</h2>
+{% endblock %}

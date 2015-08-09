@@ -28,5 +28,16 @@ class HackAdmin(admin.ModelAdmin):
     search_fields = ('hacker',)
 
 
+class FloatAdmin(admin.ModelAdmin):
+    list_display = ('owner', 'target', 'target_level', 'is_active')
+    list_filter = ('is_active',)
+
+
+class TargetAdmin(admin.ModelAdmin):
+    list_display = ('role', 'target', 'get_levels')
+
+
 admin.site.register(models.Duel, DuelAdmin)
 admin.site.register(models.Hack, HackAdmin)
+admin.site.register(models.Float, FloatAdmin)
+admin.site.register(models.Target, TargetAdmin)

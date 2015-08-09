@@ -1,0 +1,39 @@
+{% extends "hack/base.html" %}
+
+{% block hack_content %}
+    <h2>Доступное ПО</h2>
+
+    <p>
+        {% for float in free_floats %}
+            {{ float.hash }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+            У вас нет поплавков.
+        {% endfor %}
+    </p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="float">
+        <input type="submit" value="Купить поплавок">
+    </form>
+
+    <br>
+    <h2>Текущие защиты</h2>
+    <table>
+        {% for target in targets %}
+            <tr>
+                <td style="text-align: right">{{ target.get_levels|join:", "|default:"-" }}</td>
+                <td>{{ target.get_target_display }}</td>
+            </tr>
+        {% empty %}
+            <tr><td>не установлено</td></tr>
+        {% endfor %}
+    </table>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ defence_form.as_p }}
+        <input type="hidden" name="action" value="defence">
+        <input type="submit" value="Установить защиту">
+    </form>
+{% endblock %}

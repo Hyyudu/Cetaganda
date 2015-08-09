@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="inner_menu">
+    <div>
+        <table>
+            <tr>
+                <td {% if page == 'defence' %}class="active"{% endif %}><a href="{% url "hack:defence" %}">Защита</a></td>
+                <td {% if page == 'hack' %}class="active"{% endif %}><a href="{% url "hack:hacks" %}">Взломы</a></td>
+                <td {% if page == 'duel' %}class="active"{% endif %}><a href="{% url "hack:duels" %}">Дуэли</a></td>
+            </tr>
+        </table>
+    </div></div>
+
+    {% block hack_content %}
+    {% endblock %}
+{% endblock %}

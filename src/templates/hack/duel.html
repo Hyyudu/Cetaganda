@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "hack/base.html" %}
 
 {% block extrahead %}
     {% if not can_move %}
@@ -6,7 +6,7 @@
     {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block hack_content %}
     <h1>Дуэль</h1>
     <p>
         Вы - {% if mode == 'hacker' %}ломщик{% else %}машинист{% endif %}.
@@ -36,7 +36,6 @@
         <p>Дуэль окончена. Результат: {{ duel.result }}. Загаданные числа: {{ duel.number_1 }} - {{ duel.number_2 }}.</p>
 
     {% else %}
-
         {% if mode == 'security' and duel.state == 'not_started' %}
             <p>Введите ваш номер (число из {{ number_len }} цифр без повторений):
             {{ error }}

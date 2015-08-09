@@ -1,0 +1,24 @@
+{% extends "hack/base.html" %}
+
+{% block hack_content %}
+    <h2>Новая дуэль</h2>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ duel_form.as_p }}
+        <input type="submit" value="Начать дуэль">
+    </form>
+
+    <br>
+    <h2>История</h2>
+    <ul>
+        {% for duel in duels %}
+            <li>{{ duel.email_2 }}: {% if duel.state != 'finished' %}
+                    <a href="{% url "hack:duel" duel.role_1 %}">{{ duel.get_state_display }}</a>
+            {% else %}
+                {{ duel.get_state_display }}
+            {% endif %}
+                {% if duel.winner %}({{ duel.result}}){% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

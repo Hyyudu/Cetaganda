@@ -60,6 +60,7 @@ def init():
             run('touch /etc/init/cetaganda.conf')
             run('chown %s /etc/init/cetaganda.conf' % SSH_USER)
 
+        append('/etc/sudoers', '%s ALL=(ALL) NOPASSWD:/sbin/start cetaganda' % SSH_USER)
         append('/etc/sudoers', '%s ALL=(ALL) NOPASSWD:/sbin/restart cetaganda' % SSH_USER)
 
         run('mkdir -p /home/%s/projects/cetaganda' % SSH_USER)
@@ -163,8 +164,12 @@ def gunicorn():
 
 #------------------------------------------------------------------------------------------
 
+def enter(args):
+    local('cd src && ..\\ENV\\Scripts\\python manage.py %s' % args)
+
+
 def run_local():
-    local('cd src && ..\\ENV\\Scripts\\python manage.py runserver 0.0.0.0:8000')
+    enter('runserver 0.0.0.0:8000')
 
 
 def local_env():
@@ -174,7 +179,7 @@ def local_env():
 
 
 def local_static():
-    local('cd src && ..\\ENV\\Scripts\\python manage.py collectstatic -c --noinput')
+    enter('collectstatic -c --noinput')
 
 
 def update_local_db():
