@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.core.mail import send_mail
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -135,6 +136,12 @@ class Role(models.Model):
             name += ' (%s)' % userinfo.nick
         return name
     username.short_description = 'Игрок'
+
+    def send_mail(self, subject, message):
+        if self.user and self.user.email:
+            send_mail(subject, message, None, [self.user.email])
+        else:
+            send_mail('Для %s' % self.name + subject, message, None, [settings.ADMINS[0][1]])
 
     class Meta:
         verbose_name = 'Роль'

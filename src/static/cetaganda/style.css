@@ -97,6 +97,39 @@ h3 {
     color: black;
 }
 
+
+.app_menu {
+    text-align: center;
+}
+
+.app_menu table{
+    margin: 0 auto;
+}
+
+.app_menu td {
+    background-color: #9b0e12;
+    border: 3px solid #9b0e12;
+    border-radius: 10px;
+    padding: 5px 10px 5px 10px;
+    vertical-align: middle;
+}
+
+.app_menu td.active {
+    border: 3px solid lightgray;
+    background-color: lightgray;
+}
+
+.app_menu a:link, .app_menu a:active, .app_menu a:hover, .app_menu a:visited {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.app_menu .active a:link, .app_menu .active a:active, .app_menu .active a:hover, .app_menu .active a:visited {
+    color: black;
+}
+
+
 .article {
     width: 100%;
 }

@@ -3,11 +3,7 @@
 {% block hack_content %}
     <h1>Взлом</h1>
 
-    {% if hack.result %}
-        <p>Итог: {{ hack.get_result_display }}</p>
-    {% else %}
-        <p>Идет.</p>
-    {% endif %}
+    {{ hack.get_status_display }}
 
     {% if moves %}
         <h2>Ходы</h2>
@@ -16,7 +12,7 @@
         {% endfor %}
     {% endif %}
 
-    {% if not hack.result %}
+    {% ifequal hack.status "inprocess" %}
         <p>Ваш ход: {{ error }}
         <form action="" method="POST">
             {% csrf_token %}
@@ -29,6 +25,6 @@
             <input type="submit" name="action" value="Сбежать">
         </form>
         </p>
-    {% endif %}
+    {% endifequal %}
 
 {% endblock %}

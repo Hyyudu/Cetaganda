@@ -22,7 +22,7 @@ class HackMoveInline(admin.TabularInline):
 
 
 class HackAdmin(admin.ModelAdmin):
-    list_display = ('hacker', 'number', 'result', 'dt')
+    list_display = ('hacker', 'number', 'status', 'dt')
     inlines = (HackMoveInline,)
     ordering = ('-dt',)
     search_fields = ('hacker',)

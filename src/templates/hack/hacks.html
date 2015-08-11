@@ -10,4 +10,15 @@
 
     <br>
     <h2>История</h2>
+    <table cellspacing="10px">
+        {% for hack in history %}
+            <tr>
+                <td>{{ hack.hash }}</td>
+                <td>{{ hack.target.role }}</td>
+                <td>{{ hack.target.get_tagret_display }}</td>
+                <td>{{ hack.get_status_display }}</td>
+                <td>{{ hack.dt }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

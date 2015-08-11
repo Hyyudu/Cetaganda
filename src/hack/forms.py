@@ -11,6 +11,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 
+from roles.models import Role
+
 from hack import models
 
 
@@ -26,14 +28,12 @@ class DefenceForm(forms.Form):
 
     def clean_floats(self):
         hashes = map(string.strip, re.sub('[^\w]', ' ', self.cleaned_data['floats']).split())
-        print hashes
         floats = []
         for hash in hashes:
             try:
                 floats.append(models.Float.objects.get(owner=self.role, target__isnull=True, hash=hash, is_active=True))
             except (models.Float.DoesNotExist, models.Float.MultipleObjectsReturned):
                 raise forms.ValidationError('Поплавок "%s" не найден' % hash)
-        print floats
         return floats
 
     def clean_target(self):
@@ -49,8 +49,6 @@ class DefenceForm(forms.Form):
         target, _ = models.Target.objects.get_or_create(role=self.role, target=self.cleaned_data['target'])
         levels = target.get_levels()
         required_level = self.get_level_hole(levels)
-        print required_level
-        print len(self.cleaned_data['floats'])
 
         if len(self.cleaned_data['floats']) < required_level:
             raise forms.ValidationError(
@@ -130,20 +128,54 @@ class NewDuelForm(forms.Form):
 
 
 class NewHackForm(forms.Form):
-    email = forms.EmailField(label='Ваш email')
-    length = forms.IntegerField(label='Количество цифр')
+    role = forms.IntegerField(label='Кого ломаем', widget=forms.Select, required=True)
+    target = forms.CharField(label='Цель атаки', widget=forms.Select, required=True)
+    floats = forms.CharField(label='Поплавки', required=False, widget=forms.TextInput(attrs={'style': 'width: 600px;'}))
+
+    def __init__(self, role, *args, **kwargs):
+        self.role = role
+        super(NewHackForm, self).__init__(*args, **kwargs)
+
+        self.fields['target'].widget.choices = models.Target.TARGETS
+        self.fields['role'].widget.choices = ((role.id, role.name) for role in Role.objects.exclude(pk=role.pk))
+
+    def clean_role(self):
+        try:
+            return Role.objects.get(pk=self.cleaned_data['role'])
+        except Role.DoesNotExist:
+            raise forms.ValidationError('Неизвестный персонаж')
+
+    def clean_floats(self):
+        hashes = map(string.strip, re.sub('[^\w]', ' ', self.cleaned_data['floats']).split())
+        floats = []
+        for hash in hashes:
+            try:
+                floats.append(models.Float.objects.get(owner=self.role, target__isnull=True, hash=hash, is_active=True))
+            except (models.Float.DoesNotExist, models.Float.MultipleObjectsReturned):
+                raise forms.ValidationError('Поплавок "%s" не найден' % hash)
+        return floats
+
+    def clean_target(self):
+        if self.cleaned_data['target'] in [target[0] for target in models.Target.TARGETS]:
+            return self.cleaned_data['target']
+        else:
+            raise forms.ValidationError('Неизвестная цель атаки')
+
+    def clean(self):
+        target, _ = models.Target.objects.get_or_create(
+            role=self.cleaned_data['role'],
+            target=self.cleaned_data['target'],
+        )
+        self.cleaned_data['target'] = target
+
+        return self.cleaned_data
 
     def save(self):
         hack = models.Hack.objects.create(
-            hacker=uuid.uuid4().hex,
-            number=models.Hack.make_number(self.cleaned_data['length']),
-        )
-
-        send_mail(
-            'Взлом',
-            'Вы начали взлом. Ваша ссылка - %s%s' % (settings.DOMAIN, reverse('hack:hack', args=[hack.hacker])),
-            None,
-            [self.cleaned_data['email']],
+            hacker=self.role,
+            hash=uuid.uuid4().hex,
+            number=models.Hack.make_number(self.cleaned_data['target'].complexity),
+            target=self.cleaned_data['target'],
         )
 
         return hack

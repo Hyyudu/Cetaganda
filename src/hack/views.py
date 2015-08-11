@@ -43,25 +43,6 @@ class DefenceIndexView(TemplateView):
         return self.render_to_response(context)
 
 
-class HacksIndexView(TemplateView):
-    template_name = 'hack/hacks.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(HacksIndexView, self).get_context_data(**kwargs)
-        context['page'] = 'hack'
-        context['hack_form'] = forms.NewHackForm()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        context['hack_form'] = forms.NewHackForm(request.POST)
-        if context['hack_form'].is_valid():
-            hack = context['hack_form'].save()
-            return HttpResponseRedirect(reverse('hack:hack', args=[hack.hacker]))
-
-        return self.render_to_response(context)
-
-
 class DuelsIndexView(TemplateView):
     template_name = 'hack/duels.html'
 
@@ -205,12 +186,53 @@ class DuelView(TemplateView):
         return self.render_to_response(context)
 
 
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
+class HacksIndexView(TemplateView):
+    template_name = 'hack/hacks.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(HacksIndexView, self).get_context_data(**kwargs)
+        context['page'] = 'hack'
+        context['history'] = models.Hack.objects.filter(hacker=self.request.role).order_by('-pk')
+        context['hack_form'] = forms.NewHackForm(self.request.role)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        context['hack_form'] = forms.NewHackForm(self.request.role, request.POST)
+        if context['hack_form'].is_valid():
+            hack = context['hack_form'].save()
+
+            target = context['hack_form'].cleaned_data['target']
+            floats = context['hack_form'].cleaned_data['floats']
+            levels = target.get_levels()
+            for level in levels:
+                if len(floats) < level:
+                    # не хватило поплавков на взлом
+                    hack.set_status('failstatic')
+                    return HttpResponseRedirect(reverse('hack:hack', args=[hack.hacker]))
+
+                else:
+                    # снимается уровень защиты
+                    target.floats.filter(target_level=level).update(is_active=False)
+                    for float in floats[:level]:
+                        float.is_active = False
+                        float.save()
+                    floats = floats[:level]
+
+            hack.set_status('inprocess')
+            return HttpResponseRedirect(reverse('hack:hack', args=[hack.hash]))
+
+        return self.render_to_response(context)
+
+
 class HackView(TemplateView):
     template_name = 'hack/hack.html'
 
     def get_context_data(self, **kwargs):
         context = super(HackView, self).get_context_data(**kwargs)
-        self.hack = get_object_or_404(models.Hack, hacker=kwargs['key'])
+        self.hack = get_object_or_404(models.Hack, hash=kwargs['key'])
         context['page'] = 'hack'
         context['hack'] = self.hack
         context['moves'] = self.hack.hackmove_set.all().order_by('id')
@@ -219,13 +241,12 @@ class HackView(TemplateView):
     def post(self, request, *agrs, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        if self.hack.result:
+        if self.hack.status != 'inprocess':
             return self.render_to_response(context)
 
         if request.POST.get('action') == 'Сбежать':
-            self.hack.result = 'run'
-            self.hack.save()
-            return HttpResponseRedirect(reverse('hack:hack', args=[self.hack.hacker]))
+            self.hack.set_status('run')
+            return HttpResponseRedirect(self.hack.get_absolute_url())
 
         else:
             try:
@@ -241,16 +262,12 @@ class HackView(TemplateView):
 
                 if result == '1' * len(self.hack.number):
                     # Сохраняем результат
-                    self.hack.result = 'win'
-                    self.hack.save()
-
-                    return HttpResponseRedirect(reverse('hack:hack', args=[self.hack.hacker]))
+                    self.hack.set_status('win')
+                    return HttpResponseRedirect(self.hack.get_absolute_url())
 
                 if models.HackMove.objects.filter(hack=self.hack).count() >= 6:
-                    self.hack.result = 'fail'
-                    self.hack.save()
-
-                    return HttpResponseRedirect(reverse('hack:hack', args=[self.hack.hacker]))
+                    self.hack.set_status('fail')
+                    return HttpResponseRedirect(self.hack.get_absolute_url())
 
             except ValueError, e:
                 context['error'] = e
