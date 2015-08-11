@@ -137,7 +137,7 @@ class NewHackForm(forms.Form):
         super(NewHackForm, self).__init__(*args, **kwargs)
 
         self.fields['target'].widget.choices = models.Target.TARGETS
-        self.fields['role'].widget.choices = ((role.id, role.name) for role in Role.objects.exclude(pk=role.pk))
+        self.fields['role'].widget.choices = ((role.id, role.name) for role in Role.objects.filter(pk=role.pk))
 
     def clean_role(self):
         try:
