@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'redactor',
     'yafotki',
 
+    'bookkeeping',
     'hack',
     'news',
     'post_logger',
