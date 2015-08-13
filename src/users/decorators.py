@@ -26,7 +26,7 @@ def profile_required(f):
     def wrapper(request, *args, **kwargs):
         is_filled = bool(request.user.email)
 
-        userinfo = models.UserInfo.objects.get(ulogin__user=request.user)
+        userinfo = models.UserInfo.objects.get(user=request.user)
         for field in ('nick', 'age', 'phone', 'city', 'med'):
             if not getattr(userinfo, field, None):
                 is_filled = False

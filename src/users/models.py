@@ -20,7 +20,6 @@ class UserInfo(models.Model):
     SEX_FEMALE = 1
     SEX_MALE = 2
 
-    ulogin = models.ForeignKey(ULoginUser, null=True, blank=True, default=None)
     user = models.ForeignKey(AUTH_USER_MODEL, null=True, blank=True, default=None)
     nick = models.CharField(verbose_name='Ник', blank=True, default='', max_length=255)
     age = models.IntegerField(verbose_name='Возраст', blank=True, null=True, default=None)
@@ -40,7 +39,7 @@ def catch_ulogin_signal(*args, **kwargs):
         user.last_name = json['last_name']
         user.save()
 
-        data = {'ulogin': ulogin}
+        data = {'user': ulogin.user}
 
         for fld in ['sex', 'city']:
             if fld not in json:

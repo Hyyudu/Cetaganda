@@ -11,6 +11,6 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         get_user_model().__unicode__ = lambda user: '%s %s' % (user.last_name, user.first_name)
-        get_user_model().info = lambda user: UserInfo.objects.get(ulogin__user=user)
+        get_user_model().info = lambda user: UserInfo.objects.get(user=user)
 
 default_app_config = 'users.UsersConfig'

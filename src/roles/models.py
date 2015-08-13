@@ -130,7 +130,7 @@ class Role(models.Model):
         if not self.user:
             return '-'
         from users.models import UserInfo
-        userinfo = UserInfo.objects.get(ulogin__user=self.user)
+        userinfo = UserInfo.objects.get(user=self.user)
         name = '%s %s' % (self.user.last_name, self.user.first_name)
         if userinfo.nick:
             name += ' (%s)' % userinfo.nick

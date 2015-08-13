@@ -25,7 +25,7 @@ class CabinetForm(forms.Form):
 
         self.user = user
         try:
-            self.userinfo = models.UserInfo.objects.get(ulogin__user=self.user)
+            self.userinfo = models.UserInfo.objects.get(user=self.user)
         except models.UserInfo.DoesNotExist:
             try:
                 self.userinfo = models.UserInfo.objects.get(user=self.user)
