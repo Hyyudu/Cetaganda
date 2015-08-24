@@ -1,7 +1,11 @@
 # coding: utf8
 from __future__ import unicode_literals
+import uuid
 
 from django import forms
+from django.utils.crypto import get_random_string
+from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 
 from users import models
 
@@ -54,3 +58,52 @@ class CabinetForm(forms.Form):
         self.userinfo.city = self.cleaned_data['city']
         self.userinfo.med = self.cleaned_data['med']
         self.userinfo.save()
+
+
+class RegistrationForm(forms.Form):
+    email = forms.EmailField(max_length=100)
+
+    def clean_email(self):
+        if get_user_model().objects.filter(email=self.cleaned_data['email']).exists():
+            raise forms.ValidationError('Такой email на сайте уже есть. Может, вы регистрировались у нас?')
+        return self.cleaned_data['email']
+
+    def save(self):
+        password = get_random_string(20, '0123456789abcdefghijklmnopqrstuvwxyz')
+        email = self.cleaned_data['email']
+
+        user = get_user_model().objects.create_user(
+            username=uuid.uuid4().hex[:30],
+            password=password,
+            email=email,
+        )
+        user.is_active = True
+        user.save()
+
+        models.UserInfo.objects.create(user=user)
+
+        auth_user = authenticate(username=user.username, password=password)
+
+        return auth_user, password
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(max_length=100)
+    password = forms.CharField(max_length=100, widget=forms.PasswordInput())
+
+    def clean(self):
+        if self.errors:
+            return
+
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=self.cleaned_data['email'])
+        except User.DoesNotExist:
+            raise forms.ValidationError('Логин или пароль не верен')
+
+        auth_user = authenticate(username=user.username, password=self.cleaned_data['password'])
+        if auth_user:
+            self.cleaned_data['user'] = auth_user
+            return self.cleaned_data
+        else:
+            raise forms.ValidationError('Логин или пароль не верен')

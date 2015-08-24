@@ -1,23 +1,13 @@
 {% extends "inner.html" %}
-{% load staticpages %}
-{% load ulogin_tags %}
-{% load staticfiles %}
 
 {% block inner_content %}
-    {% if request.user.is_authenticated %}
-        <h1>{{ request.user.first_name|default:"незнакомец" }}: кабинет <small>(<a href="{% url "logout" %}?next=/">выйти</a>)</small></h1>
+    <h1>{{ request.user.first_name|default:"незнакомец" }}: кабинет <small>(<a href="{% url "logout" %}?next=/">выйти</a>)</small></h1>
 
-        <table>
-            <form action="" method="POST">
-                {% csrf_token %}
-                {{ form }}
-                <tr><td colspan="2"><input type="submit" value="Сохранить"></td></tr>
-            </form>
-        </table>
-    {% else %}
-        <h1>Вход на сайт</h1>
-
-        <p>Hажмите на одну из этих замечательных кнопок:</p>
-        {% ulogin_widget %}
-    {% endif %}
+    <table>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <tr><td colspan="2"><input type="submit" value="Сохранить"></td></tr>
+        </form>
+    </table>
 {% endblock %}

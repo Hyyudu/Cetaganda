@@ -1,6 +1,5 @@
 # coding: utf8
 from __future__ import unicode_literals
-
 from json import dumps
 
 from django.contrib.auth.decorators import login_required

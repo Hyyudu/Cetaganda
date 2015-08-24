@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from roles.models import Role
+from market.models import Goods
 
 
 class Duel(models.Model):
@@ -139,9 +140,24 @@ class Float(models.Model):
             hash=uuid.uuid4().hex[:8],
         )
 
+    @staticmethod
+    def market_name():
+        return 'Поплавок'
+
+    @staticmethod
+    def market_description():
+        return ''
+
+    def change_owner(self, owner):
+        self.owner = owner
+        self.save()
+
     class Meta:
         verbose_name = 'Поплавок'
         verbose_name_plural = 'Поплавки'
+
+
+Goods.register_infinite_product(Float, 100)
 
 
 class Hack(models.Model):

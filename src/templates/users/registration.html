@@ -1,0 +1,20 @@
+{% extends "inner.html" %}
+{% load ulogin_tags %}
+
+{% block inner_content %}
+    <h1>Регистрация на сайте</h1>
+
+    <p>Если вы уже регистрировались здесь, перейдите на <a href="{% url "users:login" %}">страницу логина</a>.</p>
+
+    <p>Hажмите на одну из этих замечательных кнопок:</p>
+    {% ulogin_widget %}
+
+    <p>или введите свой email</p>
+    <table>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <tr><td colspan="2"><input type="submit" value="Зарегистрироваться"></td></tr>
+        </form>
+    </table>
+{% endblock %}

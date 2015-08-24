@@ -58,6 +58,7 @@ INSTALLED_APPS = (
 
     'bookkeeping',
     'hack',
+    'market',
     'news',
     'post_logger',
     'roles',
@@ -65,7 +66,6 @@ INSTALLED_APPS = (
     'staticpages',
     'users',
 )
-
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

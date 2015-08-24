@@ -23,7 +23,8 @@
                 <area shape="poly" coords="426,260, 437,188, 575,192, 571,271" href="{% url "article" 5 %}" alt="и другие...">
                 <area shape="poly" coords="86,319, 445,293, 456, 360, 102,371" href="{% url "article" 10 %}" alt="Дипломатия и секс">
                 <area shape="poly" coords="82,376, 262,376, 265,441, 75,443" href="{% url "roles" %}" alt="Заявки">
-                <area shape="poly" coords="298,407, 450,390, 460,450, 317,468" href="{% url "cabinet" %}" alt="Войти">
+                <area shape="poly" coords="298,407, 450,390, 460,450, 317,468" href=
+                        "{% if request.user.is_authenticated %}{% url "users:cabinet" %}{% else %}{% url "users:login" %}{% endif %}" alt="Войти">
                 <area shape="poly" coords="106,475, 238,480, 217,536, 111,535" href="https://vk.com/cetaganda2016" alt="VK">
                 <area shape="poly" coords="232,532, 520,508, 524,576, 242,606" href="{% url "new_role" %}" alt="Подать заявку">
             </map>

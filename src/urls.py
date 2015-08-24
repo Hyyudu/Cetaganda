@@ -10,12 +10,13 @@ urlpatterns = [
     url(r'^articles/', include('staticpages.urls')),
     url(r'^auth/', include('django.contrib.auth.urls')),
     url(r'^hack/', include('hack.urls', namespace='hack')),
+    url(r'^market/', include('market.urls', namespace='market')),
     url(r'^news/', include('news.urls')),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^roles/', include('roles.urls')),
     url(r'^science/', include('science.urls')),
     url(r'^ulogin/', include('django_ulogin.urls')),
-    url(r'^users/', include('users.urls')),
+    url(r'^users/', include('users.urls', namespace='users')),
 
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
 ]
