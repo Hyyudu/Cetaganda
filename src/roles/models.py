@@ -78,7 +78,12 @@ class Role(models.Model):
     )
     target = models.CharField(
         verbose_name='Для кого заполняете заявку',
-        choices=(('free', 'Свободная'), ('me', 'Для себя'), ('other', 'Для друга'), ('fake', 'Временная')),
+        choices=(
+            ('free', 'Свободная'),
+            ('me', 'Для себя'),
+            ('other', 'Для друга'),
+            ('fake', 'Временная'),
+        ),
         default='free',
         max_length=20,
     )
@@ -126,16 +131,31 @@ class Role(models.Model):
 
         return 'all'
 
+    def get_player(self):
+        if self.target == 'me' and self.creator:
+            return self.creator
+        return self.user
+
     def username(self):
-        if not self.user:
+        user = self.get_player()
+        if not user:
             return '-'
         from users.models import UserInfo
-        userinfo = UserInfo.objects.get(user=self.user)
-        name = '%s %s' % (self.user.last_name, self.user.first_name)
+        userinfo = UserInfo.objects.get(user=user)
+        name = '%s %s' % (user.last_name, user.first_name)
         if userinfo.nick:
             name += ' (%s)' % userinfo.nick
         return name
     username.short_description = 'Игрок'
+
+    def userlink(self):
+        user = self.get_player()
+        if not user:
+            return
+        try:
+            return user.ulogin_users.all()[0].identity
+        except IndexError:
+            return
 
     def send_mail(self, subject, message):
         if self.user and self.user.email:

@@ -23,7 +23,8 @@ class RolesView(TemplateView):
         for role in context['roles']:
             role.rolefields = RoleField.objects.filter(role=role, field__show_in_list=True, field__visibility='all')\
                 .order_by('field__order')
-
+            role.display_user = role.username()
+            role.display_userlink = role.userlink()
         return context
 
 
