@@ -28,7 +28,7 @@ class GoodsManager(Manager):
             for product in super(GoodsManager, self).filter(is_finished=False)
             .filter(Q(buyer__isnull=True) | Q(buyer=role)).order_by('-dt')
         ]
-        for infinite_product_class in self.model.infinite_products:
+        for infinite_product_class in self.model.products_classes:
             for product in infinite_product_class.get_infinite_goods():
                 current_goods.append({
                     'id': product['type'],
@@ -43,7 +43,7 @@ class GoodsManager(Manager):
 
 
 class Goods(models.Model):
-    infinite_products = []
+    products_classes = []
 
     seller = models.ForeignKey(Role, verbose_name='Продавец', related_name='seller')
     buyer = models.ForeignKey(Role, verbose_name='Покупатель', related_name='buyer', null=True, default=None)
@@ -57,8 +57,8 @@ class Goods(models.Model):
     objects = GoodsManager()
 
     @classmethod
-    def register_infinite_product(cls, product_class):
-        cls.infinite_products.append(product_class)
+    def register(cls, product_class):
+        cls.products_classes.append(product_class)
 
     class Meta:
         verbose_name = 'Товар'
@@ -73,6 +73,7 @@ class MarketInterface(object):
         """
         raise NotImplementedError
 
+    @classmethod
     def get_available_for_market(self, owner):
         """
         :param owner: роль

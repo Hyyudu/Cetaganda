@@ -150,8 +150,9 @@ class Float(models.Model, MarketInterface):
             'class': cls,
         }]
 
-    def get_available_for_market(self, owner):
-        return []
+    @classmethod
+    def get_available_for_market(cls, owner):
+        return cls.objects.filter(owner=owner, is_active=True, target__isnull=True)
 
     def market_name(self):
         return 'Поплавок'
@@ -168,7 +169,7 @@ class Float(models.Model, MarketInterface):
         verbose_name_plural = 'Поплавки'
 
 
-Goods.register_infinite_product(Float)
+Goods.register(Float)
 
 
 class Hack(models.Model):

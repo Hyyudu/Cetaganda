@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Продажа</h1>
+
+    <p>Выберите товар, который вы хотите выставить на продажу</p>
+    <table>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <tr><td colspan="2"><input type="submit" value="Выставить"></td></tr>
+    </table>
+    </form>
+
+    <p><a href="{% url "market:index" %}">Вернуться</a> на биржу.</p>
+{% endblock %}
