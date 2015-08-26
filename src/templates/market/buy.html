@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Покупка</h1>
+
+    <form action="{% url "market:buy" %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+    </form>
+
+    <p><a href="{% url "market:index" %}">Вернуться</a> на биржу.</p>
+{% endblock %}

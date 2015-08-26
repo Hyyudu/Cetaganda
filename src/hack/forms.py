@@ -20,8 +20,8 @@ class DefenceForm(forms.Form):
     floats = forms.CharField(label='Поплавки', required=True, widget=forms.TextInput(attrs={'style': 'width: 600px;'}))
     target = forms.CharField(label='Защита', widget=forms.Select, required=True)
 
-    def __init__(self, role, *args, **kwargs):
-        self.role = role
+    def __init__(self, *args, **kwargs):
+        self.role = kwargs.pop('role')
         super(DefenceForm, self).__init__(*args, **kwargs)
 
         self.fields['target'].widget.choices = models.Target.TARGETS

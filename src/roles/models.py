@@ -9,6 +9,18 @@ from django.core.mail import send_mail
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
+class GenericManager(models.Manager):
+    """
+    Filters query set with given selectors
+    """
+    def __init__(self, **kwargs):
+        super(GenericManager, self).__init__()
+        self.selectors = kwargs
+
+    def get_queryset(self):
+        return super(GenericManager, self).get_queryset().filter(**self.selectors)
+
+
 class GameField(models.Model):
     TYPES = (
         (1, 'Строка'),
@@ -97,6 +109,10 @@ class Role(models.Model):
         verbose_name='Заморожена', default=False,
         help_text='Можно ли игроку редактировать роль',
     )
+    is_hidden = models.BooleanField(verbose_name='Скрыта', default=False)
+
+    objects = GenericManager(is_hidden=False)
+    all = GenericManager()
 
     def __unicode__(self):
         return self.name
@@ -162,6 +178,31 @@ class Role(models.Model):
             send_mail(subject, message, None, [self.user.email])
         else:
             send_mail('Для %s' % self.name + subject, message, None, [settings.ADMINS[0][1]])
+
+    def set_field(self, field_name, value):
+        try:
+            gamefield = GameField.objects.get(name=field_name)
+        except GameField.DoesNotExist:
+            raise ValueError('Неизвестное поле %s' % field_name)
+
+        field, _ = RoleField.objects.get_or_create(
+            role=self, field=gamefield
+        )
+        field.value = value
+        field.save()
+
+    def get_field(self, field_name):
+        try:
+            gamefield = GameField.objects.get(name=field_name)
+        except GameField.DoesNotExist:
+            raise ValueError('Неизвестное поле %s' % field_name)
+
+        field, _ = RoleField.objects.get_or_create(
+            role=self, field=gamefield
+        )
+        if gamefield.type == 3:
+            return int(field.value or 0)
+        return field.value
 
     class Meta:
         verbose_name = 'Роль'

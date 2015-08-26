@@ -4,7 +4,7 @@
     <h2>Новая дуэль</h2>
     <form action="" method="POST">
         {% csrf_token %}
-        {{ duel_form.as_p }}
+        {{ form.as_p }}
         <input type="submit" value="Начать дуэль">
     </form>
 

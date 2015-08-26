@@ -28,6 +28,9 @@ class RoleAdmin(admin.ModelAdmin):
     list_display = ('name', 'username', 'target')
     inlines = (RoleFieldInline, RoleConnectionInline,)
 
+    def get_queryset(self, request):
+        return models.Role.all
+
 
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('sender', 'recipient', 'created', 'is_readed')

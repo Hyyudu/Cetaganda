@@ -23,18 +23,22 @@ class GoodsManager(Manager):
                 'description': product.product.market_description(),
                 'cost': product.cost,
                 'dt': product.dt,
+                'seller': product.seller,
             }
             for product in super(GoodsManager, self).filter(is_finished=False)
-            .filter(Q(buyer__isnull=True) | Q(buyer=self.request.role)).order_by('-dt')
+            .filter(Q(buyer__isnull=True) | Q(buyer=role)).order_by('-dt')
         ]
-        for number, infinite_product in enumerate(self.model.infinite_products):
-            current_goods.append({
-                'id': -number,
-                'name': infinite_product[0].market_name(),
-                'description': infinite_product[0].market_description(),
-                'cost': infinite_product[1],
-                'dt': None,
-            })
+        for infinite_product_class in self.model.infinite_products:
+            for product in infinite_product_class.get_infinite_goods():
+                current_goods.append({
+                    'id': product['type'],
+                    'name': product['name'],
+                    'description': product['description'],
+                    'cost': product['cost'],
+                    'dt': None,
+                    'seller': None,
+                    'class': self.model,
+                })
         return current_goods
 
 
@@ -53,9 +57,52 @@ class Goods(models.Model):
     objects = GoodsManager()
 
     @classmethod
-    def register_infinite_product(cls, product_class, cost):
-        cls.infinite_products.append((product_class, cost))
+    def register_infinite_product(cls, product_class):
+        cls.infinite_products.append(product_class)
 
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
+
+
+class MarketInterface(object):
+    @classmethod
+    def get_infinite_goods(cls):
+        """
+        :return: список словарей с описаниями товаров, которые можно покупать неограниченно
+        """
+        raise NotImplementedError
+
+    def get_available_for_market(self, owner):
+        """
+        :param owner: роль
+        :return: список объектов, моторые можно выставить на продажу
+        """
+        raise NotImplementedError
+
+    def market_name(self):
+        """
+        :return: Название товара для маркета
+        """
+        raise NotImplementedError
+
+    def market_description(self):
+        """
+        :return: описание товара для маркета
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def create(cls, object_type, owner):
+        """
+        :return: вновь созданный объект из числа бесконечных товаров
+        """
+        raise NotImplementedError
+
+    def change_owner(self, owner):
+        """
+        Смена владельца, при покупке или при снятии с продажи
+        :param owner: role - новый владелец товара
+        :return:
+        """
+        raise NotImplementedError

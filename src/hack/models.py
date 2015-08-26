@@ -6,8 +6,8 @@ import uuid
 from django.core.urlresolvers import reverse
 from django.db import models
 
+from market.models import Goods, MarketInterface
 from roles.models import Role
-from market.models import Goods
 
 
 class Duel(models.Model):
@@ -121,7 +121,7 @@ class Target(models.Model):
         verbose_name_plural = 'Цели атак'
 
 
-class Float(models.Model):
+class Float(models.Model, MarketInterface):
     owner = models.ForeignKey(Role, verbose_name='Роль', related_name='floats')
     hash = models.CharField(verbose_name='Хэш', max_length=32)
     target = models.ForeignKey(
@@ -134,18 +134,29 @@ class Float(models.Model):
     is_active = models.BooleanField(verbose_name='Активен', default=True)
 
     @classmethod
-    def create(cls, owner):
+    def create(cls, object_type, owner):
         return cls.objects.create(
             owner=owner,
             hash=uuid.uuid4().hex[:8],
         )
 
-    @staticmethod
-    def market_name():
+    @classmethod
+    def get_infinite_goods(cls):
+        return [{
+            'type': 'float',
+            'name': 'Поплавок',
+            'description': '',
+            'cost': 100,
+            'class': cls,
+        }]
+
+    def get_available_for_market(self, owner):
+        return []
+
+    def market_name(self):
         return 'Поплавок'
 
-    @staticmethod
-    def market_description():
+    def market_description(self):
         return ''
 
     def change_owner(self, owner):
@@ -157,7 +168,7 @@ class Float(models.Model):
         verbose_name_plural = 'Поплавки'
 
 
-Goods.register_infinite_product(Float, 100)
+Goods.register_infinite_product(Float)
 
 
 class Hack(models.Model):

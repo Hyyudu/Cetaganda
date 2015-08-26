@@ -7,17 +7,10 @@
         {% for float in free_floats %}
             {{ float.hash }}{% if not forloop.last %}, {% endif %}
         {% empty %}
-            У вас нет поплавков.
+            У вас нет поплавков. Вы можете приобрести их на <a href="{% url "market:index" %}">бирже</a>.
         {% endfor %}
     </p>
 
-    <form action="" method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="float">
-        <input type="submit" value="Купить поплавок">
-    </form>
-
-    <br>
     <h2>Текущие защиты</h2>
     <table>
         {% for target in targets %}
@@ -32,8 +25,7 @@
 
     <form action="" method="POST">
         {% csrf_token %}
-        {{ defence_form.as_p }}
-        <input type="hidden" name="action" value="defence">
+        {{ form.as_p }}
         <input type="submit" value="Установить защиту">
     </form>
 {% endblock %}

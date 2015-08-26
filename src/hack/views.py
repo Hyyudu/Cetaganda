@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from roles.decorators import class_view_decorator, login_required, role_required
 
@@ -16,51 +16,40 @@ from hack import models, forms
 
 @class_view_decorator(login_required)
 @class_view_decorator(role_required)
-class DefenceIndexView(TemplateView):
+class DefenceIndexView(FormView):
     template_name = 'hack/defence.html'
+    form_class = forms.DefenceForm
 
     def get_context_data(self, **kwargs):
         context = super(DefenceIndexView, self).get_context_data(**kwargs)
         context['page'] = 'defence'
         context['free_floats'] = models.Float.objects.filter(owner=self.request.role, target__isnull=True)
         context['targets'] = models.Target.objects.filter(role=self.request.role)
-        context['defence_form'] = forms.DefenceForm(self.request.role)
         return context
 
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
+    def get_form_kwargs(self):
+        kwargs = super(DefenceIndexView, self).get_form_kwargs()
+        kwargs['role'] = self.request.role
+        return kwargs
 
-        if request.POST.get('action') == 'float':
-            models.Float.create(request.role)
-            return HttpResponseRedirect(reverse('hack:defence'))
-
-        if request.POST.get('action') == 'defence':
-            context['defence_form'] = forms.DefenceForm(self.request.role, request.POST)
-            if context['defence_form'].is_valid():
-                context['defence_form'].save()
-                return HttpResponseRedirect(reverse('hack:defence'))
-
-        return self.render_to_response(context)
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('hack:defence'))
 
 
-class DuelsIndexView(TemplateView):
+class DuelsIndexView(FormView):
     template_name = 'hack/duels.html'
+    form_class = forms.NewDuelForm
 
     def get_context_data(self, **kwargs):
         context = super(DuelsIndexView, self).get_context_data(**kwargs)
         context['page'] = 'duel'
-        context['duel_form'] = forms.NewDuelForm()
         context['duels'] = models.Duel.objects.filter(owner=self.request.role)
         return context
 
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        context['duel_form'] = forms.NewDuelForm(request.POST)
-        if context['duel_form'].is_valid():
-            duel = context['duel_form'].save(request.role)
-            return HttpResponseRedirect(reverse('hack:duel', args=[duel.role_1]))
-
-        return self.render_to_response(context)
+    def form_valid(self, form):
+        duel = form.save(self.request.role)
+        return HttpResponseRedirect(reverse('hack:duel', args=[duel.role_1]))
 
 
 def check_number(string, length):

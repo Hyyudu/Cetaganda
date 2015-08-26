@@ -1,15 +1,7 @@
-"""
-Django settings for cetaganda project.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.6/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.6/ref/settings/
-"""
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# coding: utf-8
+from __future__ import unicode_literals
 import os
+
 BASE_DIR = os.path.dirname(__file__)
 
 SECRET_KEY = '$b*5p2p#up#)gc*(m##6y(5u&(x#gurcx6lb@hwkl+l(78-g8h'
@@ -119,6 +111,9 @@ ULOGIN_PROVIDERS = ['vkontakte', 'livejournal', 'mailru']
 ULOGIN_HIDDEN = ['facebook', 'twitter', 'google', 'odnoklassniki']
 ULOGIN_CREATE_USER_CALLBACK = 'users.models.create_user'
 ULOGIN_DISPLAY = 'panel'
+
+# Market
+MONEY_FIELD = 'Деньги'
 
 # Logging
 LOG_DIR = '/var/log/projects/cetaganda'
