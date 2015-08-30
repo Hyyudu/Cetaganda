@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'post_logger',
     'roles',
     'science',
+    'space',
     'staticpages',
     'users',
 )
