@@ -10,6 +10,9 @@ class Alliance(models.Model):
     name = models.CharField(verbose_name='Название', max_length=100)
     role_name = models.CharField(verbose_name='Название у роли', max_length=100)
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         verbose_name = 'Альянс'
         verbose_name_plural = 'Альянсы'
