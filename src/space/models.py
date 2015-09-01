@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import models
 
-from roles.models import Role
+from market.models import Goods
+from roles.models import Role, GenericManager
 
 
 class Alliance(models.Model):
@@ -12,6 +14,14 @@ class Alliance(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @classmethod
+    def get_alliance(cls, role):
+        role_alliance = role.get_field(settings.ALLIANCE_FIELD)
+        return cls.objects.get(role_name=role_alliance)
+
+    def get_major_planet(self):
+        return Point.objects.get(type='planet', alliance=self, is_major=True)
 
     class Meta:
         verbose_name = 'Альянс'
@@ -29,6 +39,7 @@ class Point(models.Model):
     alliance = models.ForeignKey(Alliance, verbose_name='Альянс', null=True, blank=True, default=None)
     name = models.CharField(verbose_name='Название', max_length=100)
     resources = models.CharField(verbose_name='Ресурсы', max_length=10, blank=True, default='')
+    is_major = models.BooleanField(verbose_name='Основная планета альянса', default=False)
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.type)
@@ -96,14 +107,67 @@ SHIP_TYPES = ((k, v['name']) for k, v in SHIPS.items())
 
 class Ship(models.Model):
     owner = models.ForeignKey(Role, verbose_name='Владелец', related_name='ships')
-    is_space = models.BooleanField(verbose_name='В космосе', default=False)
+    alliance = models.ForeignKey(Alliance, verbose_name='Альянс', related_name='alliance_ships')
+    in_space = models.BooleanField(verbose_name='В космосе', default=False)
     fleet = models.ForeignKey(Fleet, verbose_name='Флот', null=True, blank=True, default=None)
     position = models.ForeignKey(Point, verbose_name='Положение', null=True, blank=True, default=None)
     type = models.CharField(verbose_name='Тип', max_length=1, choices=SHIP_TYPES)
     name = models.CharField(verbose_name='Название', max_length=100)
     resources = models.CharField(verbose_name='Ресурсы', max_length=10, blank=True, default='')  # для транспорта
     diplomats = models.ManyToManyField(Role, verbose_name='Дипломаты', related_name='responsible_for')
+    is_alive = models.BooleanField(verbose_name='Живой', default=True)
+
+    objects = GenericManager(is_alive=True)
+    all = GenericManager()
 
     class Meta:
         verbose_name = 'Корабль'
         verbose_name_plural = 'Корабли'
+
+    @classmethod
+    def create(cls, object_type, owner):
+        print "CERATE", owner.id
+        try:
+            alliance = Alliance.get_alliance(owner)
+        except Alliance.DoesNotExist:
+            raise ValueError('Вам необходимо вступить в альянс, чтобы покупать корабли')
+
+        amount = cls.objects.filter(alliance=alliance).count()
+        name = '%s%s%s' % (SHIPS[object_type]['name'][0], amount + 1, alliance.name[0])
+        return cls.objects.create(
+            owner=owner,
+            alliance=alliance,
+            type=object_type,
+            name=name,
+        )
+
+    @classmethod
+    def get_infinite_goods(cls):
+        return [
+            {
+                'type': k,
+                'name': v['name'],
+                'description': '',
+                'cost': v['cost'],
+                'class': cls,
+            }
+            for k, v in SHIPS.items()
+        ]
+
+    @classmethod
+    def get_available_for_market(cls, owner):
+        return cls.objects.filter(owner=owner)
+
+    def market_name(self):
+        return SHIPS[self.type]['name']
+
+    def market_description(self):
+        return ''
+
+    def change_owner(self, owner):
+        alliance = Alliance.get_alliance(owner)
+        self.alliance = alliance
+        self.owner = owner
+        self.save()
+
+Goods.register(Ship)

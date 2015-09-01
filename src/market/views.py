@@ -55,8 +55,11 @@ class BuyView(FormView):
 
         else:
             # Бесконечный товар
-            product['class'].create(product['type'], self.request.role)
-            cost = product['cost']
+            try:
+                product['class'].create(product['type'], self.request.role)
+                cost = product['cost']
+            except Exception as e:
+                return self.render_to_response({'error': e})
 
         money = self.request.role.get_field(settings.MONEY_FIELD) or 0
         self.request.role.set_field(settings.MONEY_FIELD, money - cost)

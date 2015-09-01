@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^market/', include('market.urls', namespace='market')),
     url(r'^news/', include('news.urls')),
     url(r'^redactor/', include('redactor.urls')),
-    url(r'^roles/', include('roles.urls')),
+    url(r'^roles/', include('roles.urls', namespace='roles')),
     url(r'^science/', include('science.urls')),
     url(r'^ulogin/', include('django_ulogin.urls')),
     url(r'^users/', include('users.urls', namespace='users')),

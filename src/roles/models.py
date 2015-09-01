@@ -118,7 +118,7 @@ class Role(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('role', args=[self.id])
+        return reverse('roles:view', args=[self.id])
 
     def can_edit(self, user):
         if user.has_perm('roles.can_edit_role'):
@@ -202,6 +202,9 @@ class Role(models.Model):
         )
         if gamefield.type == 3:
             return int(field.value or 0)
+        elif gamefield.type == 4:
+            return gamefield.additional.split(',')[int(field.value)]
+
         return field.value
 
     class Meta:

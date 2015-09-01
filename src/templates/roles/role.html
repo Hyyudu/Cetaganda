@@ -12,12 +12,12 @@
         {% endif %}
 
         {% if can_edit %}
-            <small>(<a href="{% url "edit_role" role.pk %}">редактировать роль</a>)
-                <!--(<a href="{% url "edit_role_connections" role.pk %}">редактировать связи</a>)--></small>
+            <small>(<a href="{% url "roles:edit" role.pk %}">редактировать роль</a>)
+                <!--(<a href="{% url "roles:edit_connections" role.pk %}">редактировать связи</a>)--></small>
         {% endif %}
 
         {% if owner %}
-            <small>(<a href="{% url "delete_role" role.pk %}">удалить роль</a>)</small>
+            <small>(<a href="{% url "roles:delete" role.pk %}">удалить роль</a>)</small>
         {% endif %}
     </h1>
 

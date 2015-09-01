@@ -163,7 +163,7 @@ class EditConnectionsView(TemplateView):
 
         if context['formset'].is_valid():
             context['formset'].save()
-            return HttpResponseRedirect(reverse('role', args=[self.object.id]) + '?save=ok')
+            return HttpResponseRedirect(reverse('roles:view', args=[self.object.id]) + '?save=ok')
         else:
             return self.render_to_response(context)
 
@@ -190,7 +190,7 @@ class AddConnectionView(FormView):
 
     def form_valid(self, form):
         form.save(self.connection)
-        return HttpResponseRedirect(reverse('report_dual_connections', args=[self.role.game_id]))
+        return HttpResponseRedirect(reverse('roles:report_dual_connections', args=[self.role.game_id]))
 
 
 @class_view_decorator(login_required)

@@ -3,6 +3,10 @@
 {% block content %}
     <h1>Покупка</h1>
 
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
     <form action="{% url "market:buy" %}" method="POST">
         {% csrf_token %}
         {{ form }}

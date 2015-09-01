@@ -19,3 +19,12 @@ class AllianceAdmin(admin.ModelAdmin):
 @admin.register(models.Transit)
 class TransitAdmin(admin.ModelAdmin):
     list_display = ('point1', 'point2')
+
+
+@admin.register(models.Ship)
+class ShipAdmin(admin.ModelAdmin):
+    list_display = ('name', 'owner', 'type', 'in_space', 'position', 'is_alive')
+    raw_id_fields = ('diplomats',)
+
+    def get_queryset(self, request):
+        return models.Ship.all

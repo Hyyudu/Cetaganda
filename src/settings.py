@@ -116,6 +116,9 @@ ULOGIN_DISPLAY = 'panel'
 # Market
 MONEY_FIELD = 'Деньги'
 
+# Space
+ALLIANCE_FIELD = 'Подданство'
+
 # Logging
 LOG_DIR = '/var/log/projects/cetaganda'
 

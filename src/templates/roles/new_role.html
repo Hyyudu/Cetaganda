@@ -3,6 +3,10 @@
 {% block content %}
     <h1>Создание новой роли</h1>
 
+    {% if request.role %}
+        <p>Имейте в виду, у вас <a href="{% url "roles:edit" request.role.id %}">уже есть</a> роль.</p>
+    {% endif %}
+
     <form action="" method="POST">
         {% csrf_token %}
         <table class="table" style="width: auto">
