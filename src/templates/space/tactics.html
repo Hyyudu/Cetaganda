@@ -1,0 +1,19 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    {% if error %}
+        <p>{{ error }}</p>
+    {% else %}
+
+        <h2>Ваши флота</h2>
+
+        {% for fleet in fleets %}
+            <p><strong>{{ fleet.name }}</strong>: {{ fleet.point }}</p>
+            <ul>
+                {% for ship in fleet.ship_set.all %}
+                    <li>{{ ship.name }} ({{ ship.owner }})</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

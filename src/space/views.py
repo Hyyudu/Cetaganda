@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.views.generic import TemplateView, DetailView, FormView
 from django.http import HttpResponseRedirect, Http404
+from django.conf import settings
 
 from roles.decorators import class_view_decorator, login_required, role_required
 from space import models, forms
@@ -91,12 +92,25 @@ class ShipFleetView(FormView):
 
 @class_view_decorator(login_required)
 @class_view_decorator(role_required)
-class ShipDiplomatsView(FormView):
+class ShipDiplomatsView(TemplateView):
     pass
 
 
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
 class TacticsView(TemplateView):
-    pass
+    template_name = 'space/tactics.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TacticsView, self).get_context_data(**kwargs)
+        if self.request.role.get_field(settings.TACTICS_FIELD[0]) == settings.TACTICS_FIELD[1]:
+            context['fleets'] = models.Fleet.objects.filter(navigator=self.request.role)
+        else:
+            context['error'] = 'Так получилось, что вы не космотактик. ' \
+                               'Вашей квалификации недостаточно, чтобы управлять кораблями'
+
+        context['page'] = 'tactics'
+        return context
 
 
 class DiplomacyView(TemplateView):

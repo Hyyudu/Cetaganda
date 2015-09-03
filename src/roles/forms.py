@@ -64,7 +64,7 @@ class RoleForm(forms.ModelForm):
             elif field.type == 3:
                 formfield = forms.IntegerField(label=field.name, required=False)
             elif field.type == 4:
-                formfield = forms.IntegerField(label=field.name, widget=forms.Select, required=False)
+                formfield = forms.CharField(label=field.name, widget=forms.Select, required=False)
             else:
                 raise ValueError('Unknown field type %s' % field.type)
 
