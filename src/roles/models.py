@@ -202,8 +202,6 @@ class Role(models.Model):
         )
         if gamefield.type == 3:
             return int(field.value or 0)
-        elif gamefield.type == 4:
-            return gamefield.additional.split(',')[int(field.value)]
 
         return field.value
 
@@ -219,15 +217,6 @@ class RoleField(models.Model):
     role = models.ForeignKey(Role, verbose_name='Роль')
     field = models.ForeignKey(GameField, verbose_name='Поле')
     value = models.TextField(verbose_name='Значение', null=True, blank=True, default=None)
-
-    def get_value(self):
-        if self.field.type == 4:
-            try:
-                return self.field.additional.split(',')[int(self.value)].strip()
-            except IndexError:
-                return '-'
-        else:
-            return self.value
 
     class Meta:
         verbose_name = 'Поле роли'

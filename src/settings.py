@@ -118,6 +118,8 @@ MONEY_FIELD = 'Деньги'
 
 # Space
 ALLIANCE_FIELD = 'Подданство'
+TACTICS_FIELD = ('Профессия', 'космотактик')
+DIPLOMACY_FIELD = ('Профессия', 'дипломат')
 
 # Logging
 LOG_DIR = '/var/log/projects/cetaganda'

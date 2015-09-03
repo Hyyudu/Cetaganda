@@ -6,7 +6,7 @@ from space import models
 
 @admin.register(models.Point)
 class PointAdmin(admin.ModelAdmin):
-    list_display = ('type', 'name', 'alliance', 'resources')
+    list_display = ('type', 'name', 'alliance', 'resources', 'is_major')
     ordering = ('name', 'type')
     list_filter = ('type', 'alliance')
 
@@ -19,6 +19,11 @@ class AllianceAdmin(admin.ModelAdmin):
 @admin.register(models.Transit)
 class TransitAdmin(admin.ModelAdmin):
     list_display = ('point1', 'point2')
+
+
+@admin.register(models.Fleet)
+class FleetAdmin(admin.ModelAdmin):
+    list_display = ('name', 'point', 'navigator', 'ships_amount')
 
 
 @admin.register(models.Ship)

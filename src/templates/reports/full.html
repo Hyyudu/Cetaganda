@@ -48,7 +48,7 @@
             {% endif %}
 
             {% for field in role.rolefield_set.all %}
-                <tr><th style="white-space: nowrap">{{ field.field.name }}</th><td colspan="3"  style="width: 100%">{{ field.get_value|default:"" }}</td></tr>
+                <tr><th style="white-space: nowrap">{{ field.field.name }}</th><td colspan="3"  style="width: 100%">{{ field.value|default:"" }}</td></tr>
             {% endfor %}
         </table>
 

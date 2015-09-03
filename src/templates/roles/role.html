@@ -41,7 +41,7 @@
             <tr><td>Блок</td><td>{{ role.group }}</td></tr>
         {% endif %}
         {% for field in fields %}
-            <tr><td>{{ field.field.name }}</td><td>{{ field.get_value }}</td></tr>
+            <tr><td>{{ field.field.name }}</td><td>{{ field.value }}</td></tr>
         {% endfor %}
     </table>
 

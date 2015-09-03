@@ -1,0 +1,13 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <h1>Корабль "{{ object.name }}". Смена навигатора.</h1>
+
+    <p>Выберите навигатора для своего корабля.</p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Назначить">
+    </form>
+{% endblock %}

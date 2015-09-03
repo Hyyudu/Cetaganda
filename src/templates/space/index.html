@@ -1,0 +1,70 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <h1>Космотактика</h1>
+
+    <h2>Ваши корабли</h2>
+
+    <p><strong>Активные</strong>
+    {% if active_ships %}
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Тип</th>
+                <th>Флот</th>
+                <th>Положение</th>
+            </tr>
+            {% for ship in active_ships %}
+                <tr>
+                    <td><a href="{% url "space:ship" ship.id %}">{{ ship.name }}</a></td>
+                    <td>{{ ship.get_type_display }}</td>
+                    <td>{{ ship.fleet|default:"" }}</td>
+                    <td>{{ ship.position }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>нет</p>
+    {% endif %}
+    </p>
+    <br>
+
+    <p><strong>На стапелях</strong>
+    {% if passive_ships %}
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Тип</th>
+            </tr>
+            {% for ship in passive_ships %}
+                <tr>
+                    <td><a href="{% url "space:ship" ship.id %}">{{ ship.name }}</a></td>
+                    <td>{{ ship.get_type_display }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div>нет</div>
+    {% endif %}
+    </p>
+    <br>
+
+    <p><strong>Уничтоженные</strong>
+    {% if dead_ships %}
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Тип</th>
+            </tr>
+            {% for ship in dead_ships %}
+                <tr>
+                    <td><a href="{% url "space:ship" ship.id %}">{{ ship.name }}</a></td>
+                    <td>{{ ship.get_type_display }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>нет</p>
+    {% endif %}
+    </p>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <h1>Корабль "{{ object.name }}". Местонахождение: {{ object.position }}.</h1>
+
+    <p>В составе флота:
+        {% if object.fleet %}
+            "{{ object.fleet.name }}", навигатор {{ object.fleet.navigator }}
+        {% else %}
+            нет
+        {% endif %}
+        (<a href="{% url "space:ship_fleet" object.id %}">сменить</a>)
+    </p>
+
+    <p>{% if object.diplomats.exists %}
+        Дипломаты: {% for diplomat in object.diplomats.all %}{{ diplomat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+    {% else %}
+        Дипломаты не назначены
+    {% endif %}
+    <p>
+
+{% endblock %}

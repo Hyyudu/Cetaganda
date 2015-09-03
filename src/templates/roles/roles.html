@@ -9,7 +9,7 @@
             <tr class="{% cycle 'tr_odd' 'tr_even' %}">
                 <td><a href="{% url "role" role.id %}">{{ role.name }}</a></td>
                 {% for field in role.rolefields %}
-                    <td>{{ field.get_value }}</td>
+                    <td>{{ field.value }}</td>
                 {% endfor %}
                 <td>{% if role.display_userlink %}
                         <a href="{{ role.display_userlink }}">{{ role.display_user }}<a>

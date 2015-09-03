@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from market.models import Goods
 from roles.models import Role, GenericManager
@@ -68,6 +69,10 @@ class Fleet(models.Model):
         verbose_name = 'Флот'
         verbose_name_plural = 'Флота'
 
+    def ships_amount(self):
+        return self.ship_set.count()
+    ships_amount.short_description = 'Кораблей'
+
 
 SHIPS = {
     'l': {
@@ -123,10 +128,23 @@ class Ship(models.Model):
     class Meta:
         verbose_name = 'Корабль'
         verbose_name_plural = 'Корабли'
+        permissions = (
+            ('can_edit_ship', 'Может редактировать корабли'),
+        )
+
+    def get_absolute_url(self):
+        return reverse('space:ship', args=[self.id])
+
+    @property
+    def state(self):
+        if not self.is_alive:
+            return 'dead'
+        if not self.in_space:
+            return 'dockyard'
+        return 'space'
 
     @classmethod
     def create(cls, object_type, owner):
-        print "CERATE", owner.id
         try:
             alliance = Alliance.get_alliance(owner)
         except Alliance.DoesNotExist:

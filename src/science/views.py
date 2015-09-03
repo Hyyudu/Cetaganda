@@ -32,13 +32,13 @@ class IndexView(TemplateView):
             context['store_form'] = forms.StoreForm(request.POST)
             if context['store_form'].is_valid():
                 context['store_form'].save(context['store'])
-                return HttpResponseRedirect(reverse('science_index'))
+                return HttpResponseRedirect(reverse('science:index'))
 
         if request.POST.get('action') == 'transfer':
             context['transfer_form'] = forms.TransferForm(self.request.role, request.POST)
             if context['transfer_form'].is_valid():
                 context['transfer_form'].save()
-                return HttpResponseRedirect(reverse('science_index'))
+                return HttpResponseRedirect(reverse('science:index'))
 
         return self.render_to_response(context)
 
@@ -52,7 +52,7 @@ class CreateInventionView(FormView):
     def form_valid(self, form):
         if self.request.POST.get('action') == 'Запомнить':
             form.save(self.request.role)
-            return HttpResponseRedirect(reverse('science_index'))
+            return HttpResponseRedirect(reverse('science:index'))
 
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -80,6 +80,6 @@ class InventionView(DetailView):
         invention = self.get_object()
         if invention.enough_store():
             invention.produce()
-            return HttpResponseRedirect(reverse('science_index'))
+            return HttpResponseRedirect(reverse('science:index'))
 
         return self.get(request, *args, **kwargs)

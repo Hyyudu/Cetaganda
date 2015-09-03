@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>Наука</h1>
-    <h2><a href="{% url "science_create_invention" %}">Новое изобретение</a></h2>
+    <h2><a href="{% url "science:create_invention" %}">Новое изобретение</a></h2>
 
     <h2>Ваши запасы</h2>
     <p>На данный момент у вас имеется</p>
@@ -48,14 +48,14 @@
         </tr>
         {% for invention in inventions %}
             <tr>
-                <td><a href="{% url "science_invention" invention.hash %}" {% if invention.action %}style="font-weight: bold"{% endif %}>{{ invention.name }}</a></td>
+                <td><a href="{% url "science:invention" invention.hash %}" {% if invention.action %}style="font-weight: bold"{% endif %}>{{ invention.name }}</a></td>
                 <td>{{ invention.action|default:'-' }}</td>
                 <td>{{ invention.cost }}</td>
             </tr>
         {% endfor %}
     </table>
 
-    <p><a href="{% url "science_create_invention" %}">Создать новое изобретение</a>.</p>
+    <p><a href="{% url "science:create_invention" %}">Создать новое изобретение</a>.</p>
 
     <h2>Готовые изделия</h2>
     <table class="bordered">

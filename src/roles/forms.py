@@ -1,5 +1,6 @@
 # coding: utf8
 from __future__ import unicode_literals
+import re
 
 from django import forms
 
@@ -69,7 +70,8 @@ class RoleForm(forms.ModelForm):
 
             self.fields['rolefield_%s' % field.pk] = formfield
             if field.type == 4:
-                self.fields['rolefield_%s' % field.pk].widget.choices = list(enumerate(field.additional.split(',')))
+                self.fields['rolefield_%s' % field.pk].widget.choices = \
+                    [(variant, variant) for variant in re.split('\s*,\s*', field.additional)]
 
         if kwargs.get('instance'):
             for field in models.RoleField.objects.filter(role=kwargs.get('instance')):
