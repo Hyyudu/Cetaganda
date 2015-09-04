@@ -1,9 +1,10 @@
 # coding: utf8
 from __future__ import unicode_literals
 
-from django.views.generic import TemplateView, DetailView, FormView
-from django.http import HttpResponseRedirect, Http404
 from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, Http404
+from django.views.generic import TemplateView, DetailView, FormView
 
 from roles.decorators import class_view_decorator, login_required, role_required
 from space import models, forms
@@ -96,6 +97,10 @@ class ShipDiplomatsView(TemplateView):
     pass
 
 
+def _is_tactic(role):
+    return role.get_field(settings.TACTICS_FIELD[0]) == settings.TACTICS_FIELD[1]
+
+
 @class_view_decorator(login_required)
 @class_view_decorator(role_required)
 class TacticsView(TemplateView):
@@ -103,14 +108,71 @@ class TacticsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TacticsView, self).get_context_data(**kwargs)
-        if self.request.role.get_field(settings.TACTICS_FIELD[0]) == settings.TACTICS_FIELD[1]:
-            context['fleets'] = models.Fleet.objects.filter(navigator=self.request.role)
+        if _is_tactic(self.request.role):
+            context['fleets'] = models.Fleet.objects.filter(navigator=self.request.role).order_by('point__name', 'name')
         else:
             context['error'] = 'Так получилось, что вы не космотактик. ' \
                                'Вашей квалификации недостаточно, чтобы управлять кораблями'
 
         context['page'] = 'tactics'
         return context
+
+
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
+class TacticsMergeView(FormView):
+    template_name = 'space/tactics_merge.html'
+    form_class = forms.TacticsMergeForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not _is_tactic(self.request.role):
+            raise Http404
+        return super(TacticsMergeView, self).dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(TacticsMergeView, self).get_form_kwargs()
+        kwargs['role'] = self.request.role
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('space:tactics'))
+
+
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
+class FleetSplitView(TemplateView):
+    template_name = 'space/tactics_split.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not _is_tactic(self.request.role):
+            raise Http404
+
+        self.object = models.Fleet.objects.get(pk=kwargs['pk'])
+        if self.object.navigator != request.role:
+            raise Http404
+
+        return super(FleetSplitView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(FleetSplitView, self).get_context_data(**kwargs)
+        context['page'] = 'tactics'
+        context['object'] = self.object
+        return context
+
+    def post(self, request, *args, **kwargs):
+        for ship in self.object.ship_set.all():
+            fleet = models.Fleet.objects.create(
+                name=ship.name,
+                point=self.object.point,
+                navigator=self.object.navigator,
+            )
+
+            ship.fleet = fleet
+            ship.save()
+
+        self.object.delete()
+        return HttpResponseRedirect(reverse('space:tactics'))
 
 
 class DiplomacyView(TemplateView):

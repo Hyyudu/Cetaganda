@@ -69,6 +69,9 @@ class Fleet(models.Model):
         verbose_name = 'Флот'
         verbose_name_plural = 'Флота'
 
+    def __unicode__(self):
+        return "%s (%s)" % (self.name, self.point)
+
     def ships_amount(self):
         return self.ship_set.count()
     ships_amount.short_description = 'Кораблей'

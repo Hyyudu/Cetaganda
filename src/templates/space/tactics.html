@@ -3,17 +3,21 @@
 {% block space_content %}
     {% if error %}
         <p>{{ error }}</p>
-    {% else %}
 
+    {% else %}
         <h2>Ваши флота</h2>
 
         {% for fleet in fleets %}
-            <p><strong>{{ fleet.name }}</strong>: {{ fleet.point }}</p>
+            <p><strong>{{ fleet.name }}</strong>: {{ fleet.point }}
+                (<a href="">переместить</a>, <a href="{% url "space:fleet_split" fleet.id %}">разделить</a>)
+            </p>
             <ul>
                 {% for ship in fleet.ship_set.all %}
                     <li>{{ ship.name }} ({{ ship.owner }})</li>
                 {% endfor %}
             </ul>
         {% endfor %}
+
+        <p><a href="{% url "space:tactics_merge" %}">Объединение флотов</a>.</p>
     {% endif %}
 {% endblock %}

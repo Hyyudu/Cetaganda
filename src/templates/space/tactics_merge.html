@@ -1,0 +1,15 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <h1>Объединение флотов.</h1>
+
+    <p>Выберите два флота, которые вы хотите объединить в один. Флота должны находиться в одной точке.</p>
+
+    <table>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <tr><td colspan="2"><input type="submit" value="Объединить"></td></tr>
+    </form>
+    </table>
+{% endblock %}
