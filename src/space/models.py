@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
 
+from jsonfield.fields import JSONField
 from market.models import Goods
 from roles.models import Role, GenericManager
 
@@ -20,9 +21,6 @@ class Alliance(models.Model):
     def get_alliance(cls, role):
         role_alliance = role.get_field(settings.ALLIANCE_FIELD)
         return cls.objects.get(role_name=role_alliance)
-
-    def get_major_planet(self):
-        return Point.objects.get(type='planet', alliance=self, is_major=True)
 
     class Meta:
         verbose_name = 'Альянс'
@@ -40,7 +38,6 @@ class Point(models.Model):
     alliance = models.ForeignKey(Alliance, verbose_name='Альянс', null=True, blank=True, default=None)
     name = models.CharField(verbose_name='Название', max_length=100)
     resources = models.CharField(verbose_name='Ресурсы', max_length=10, blank=True, default='')
-    is_major = models.BooleanField(verbose_name='Основная планета альянса', default=False)
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.type)
@@ -118,12 +115,17 @@ class Ship(models.Model):
     alliance = models.ForeignKey(Alliance, verbose_name='Альянс', related_name='alliance_ships')
     in_space = models.BooleanField(verbose_name='В космосе', default=False)
     fleet = models.ForeignKey(Fleet, verbose_name='Флот', null=True, blank=True, default=None)
-    position = models.ForeignKey(Point, verbose_name='Положение', null=True, blank=True, default=None)
+    position = models.ForeignKey(
+        Point, verbose_name='Положение',
+        null=True, blank=True, default=None,
+        related_name='position',
+    )
     type = models.CharField(verbose_name='Тип', max_length=1, choices=SHIP_TYPES)
     name = models.CharField(verbose_name='Название', max_length=100)
-    resources = models.CharField(verbose_name='Ресурсы', max_length=10, blank=True, default='')  # для транспорта
+    resources = JSONField(verbose_name='Ресурсы', default='{}')  # для транспорта
     diplomats = models.ManyToManyField(Role, verbose_name='Дипломаты', related_name='responsible_for')
     is_alive = models.BooleanField(verbose_name='Живой', default=True)
+    home = models.ForeignKey(Point, verbose_name='Положение', null=True, blank=True, default=None, related_name='home')
 
     objects = GenericManager(is_alive=True)
     all = GenericManager()

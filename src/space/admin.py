@@ -6,7 +6,7 @@ from space import models
 
 @admin.register(models.Point)
 class PointAdmin(admin.ModelAdmin):
-    list_display = ('type', 'name', 'alliance', 'resources', 'is_major')
+    list_display = ('type', 'name', 'alliance', 'resources')
     ordering = ('name', 'type')
     list_filter = ('type', 'alliance')
 

@@ -9,7 +9,7 @@
 
     {% if alliance %}
         <p>Ваш альянс: {{ alliance.name }}</p>
-        {% if dockyard %}
+        {% if dockyards %}
             <p>Верфь: {{ dockyard.name }}</p>
 
             <p>Ваш корабль готов выйти в космос.
@@ -20,13 +20,14 @@
             <form action="" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="deploy">
+                {{ deploy_form.as_p }}
                 <input type="submit" value="Поехали!" onclick="return confirm('Вы уверены, что хотите запустить этот корабль в космос?')">
             </form>
 
         {% else %}
-            <p>У альянса нет материнской планеты. Обратитесь к мастерам.</p>
+            <p>У альянса нет ни одной планеты. Вам негде запускать корабль.</p>
         {% endif %}
     {% else %}
-        <p>Вы не состоитени в одном Альянсе. Вывод кораблей в космос вам запрещен.</p>
+        <p>Вы не состоите ни в одном Альянсе. Вывод кораблей в космос вам запрещен.</p>
     {% endif %}
 {% endblock %}

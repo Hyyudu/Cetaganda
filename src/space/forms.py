@@ -7,6 +7,32 @@ from django.conf import settings
 from space import models
 
 
+class DeployForm(forms.Form):
+    home = forms.IntegerField(label='Порт приписки', widget=forms.Select)
+
+    def __init__(self, role, *args, **kwargs):
+        super(DeployForm, self).__init__(*args, **kwargs)
+
+        self.role = role
+        self.alliance = models.Alliance.get_alliance(self.role)
+        self.fields['home'].widget.choices = [
+            (planet.id, planet.name)
+            for planet in self.alliance.point_set.all().order_by('name')
+        ]
+
+    def clean_home(self):
+        try:
+            return models.Point.objects.get(alliance=self.alliance, pk=self.cleaned_data['home'])
+        except models.Point.DoesNotExist:
+            raise forms.ValidationError('Неизвестная планета')
+
+    def save(self, ship):
+        ship.in_space = True
+        ship.position = self.cleaned_data['home']
+        ship.home = self.cleaned_data['home']
+        ship.save()
+
+
 class FleetForm(forms.Form):
     navigator = forms.IntegerField(label='', widget=forms.Select)
 

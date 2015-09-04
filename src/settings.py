@@ -50,6 +50,7 @@ INSTALLED_APPS = (
 
     'bookkeeping',
     'hack',
+    'jsonfield',
     'market',
     'news',
     'post_logger',

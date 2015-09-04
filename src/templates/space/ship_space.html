@@ -3,6 +3,7 @@
 {% block space_content %}
     <h1>Корабль "{{ object.name }}". Местонахождение: {{ object.position }}.</h1>
 
+    <p>Порт приписки: {{ object.home.name }}</p>
     <p>В составе флота:
         {% if object.fleet %}
             "{{ object.fleet.name }}", навигатор {{ object.fleet.navigator }}

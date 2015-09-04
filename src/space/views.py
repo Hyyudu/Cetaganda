@@ -44,7 +44,8 @@ class ShipView(DetailView):
         context['page'] = 'ships'
         try:
             context['alliance'] = models.Alliance.get_alliance(self.request.role)
-            context['dockyard'] = context['alliance'].get_major_planet()
+            context['dockyards'] = context['alliance'].point_set.all()
+            context['deploy_form'] = forms.DeployForm(self.request.role)
         except (models.Alliance.DoesNotExist, models.Point.DoesNotExist):
             pass
 
@@ -53,15 +54,11 @@ class ShipView(DetailView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(object=self.object)
 
-        if request.POST.get('action') == 'deploy':
-            if context['dockyard'] and self.object.state == 'dockyard':
-                self.object.in_space = True
-                self.object.position = context['dockyard']
-                self.object.save()
-
+        if request.POST.get('action') == 'deploy' and self.object.state == 'dockyard':
+            context['deploy_form'] = forms.DeployForm(self.request.role, request.POST)
+            if context['deploy_form'].is_valid():
+                context['deploy_form'].save(self.object)
                 return HttpResponseRedirect(self.object.get_absolute_url())
-            else:
-                context['error'] = 'Что-то пошло не так'
         return self.render_to_response(context)
 
 

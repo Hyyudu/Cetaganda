@@ -9,7 +9,7 @@
 
         {% for fleet in fleets %}
             <p><strong>{{ fleet.name }}</strong>: {{ fleet.point }}
-                (<a href="">переместить</a>, <a href="{% url "space:fleet_split" fleet.id %}">разделить</a>)
+                (<a href="">переместить</a>{% if fleet.ship_set.count > 1 %}, <a href="{% url "space:fleet_split" fleet.id %}">разделить</a>{% endif %})
             </p>
             <ul>
                 {% for ship in fleet.ship_set.all %}
