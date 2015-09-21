@@ -1,0 +1,17 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    {% if error %}
+        <p>{{ error }}</p>
+
+    {% else %}
+        <h2>Корабли под вашей опекой</h2>
+
+        <ul>
+        {% for ship in ships %}
+            <li>{{ ship.name }}, {{ ship.position|default:"на стапелях" }}
+                (<a href="{% url "space:ship_friendship" ship.id %}">договора</a>)</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

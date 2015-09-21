@@ -145,6 +145,7 @@ class Ship(models.Model):
     diplomats = models.ManyToManyField(Role, verbose_name='Дипломаты', related_name='responsible_for')
     is_alive = models.BooleanField(verbose_name='Живой', default=True)
     home = models.ForeignKey(Point, verbose_name='Положение', null=True, blank=True, default=None, related_name='home')
+    friends = models.ManyToManyField('self', verbose_name='Дружба')
 
     objects = GenericManager(is_alive=True)
     all = GenericManager()

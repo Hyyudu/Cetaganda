@@ -127,6 +127,10 @@ def _is_tactic(role):
     return role.get_field(settings.TACTICS_FIELD[0]) == settings.TACTICS_FIELD[1]
 
 
+def _is_diplomat(role):
+    return role.get_field(settings.DIPLOMACY_FIELD[0]) == settings.DIPLOMACY_FIELD[1]
+
+
 @class_view_decorator(login_required)
 @class_view_decorator(role_required)
 class TacticsView(TemplateView):
@@ -234,4 +238,19 @@ class FleetRouteView(FormView):
 
 
 class DiplomacyView(TemplateView):
-    pass
+    template_name = 'space/diplomacy.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DiplomacyView, self).get_context_data(**kwargs)
+        if _is_diplomat(self.request.role):
+            context['ships'] = self.request.role.responsible_for.filter(is_alive=True).order_by('name')
+        else:
+            context['error'] = 'Так получилось, что вы не дипломат. ' \
+                               'Вашей квалификации недостаточно, чтобы заключать соглашения.'
+
+        context['page'] = 'diplomacy'
+        return context
+
+
+class FriendshipView(TemplateView):
+    template_name = ''
