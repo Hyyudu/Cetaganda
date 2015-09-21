@@ -161,3 +161,22 @@ class RouteForm(forms.Form):
     def save(self):
         self.fleet.route = self.cleaned_data['route']
         self.fleet.save()
+
+
+class BaseConnectionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(BaseConnectionForm, self).__init__(*args, **kwargs)
+
+        self.fields['role'].widget.choices = [('', '-----')] + [
+            (str(role.pk), role.name)
+            for role in models.Role.objects.all()
+            if role.get_field(settings.DIPLOMACY_FIELD[0]) == settings.DIPLOMACY_FIELD[1]
+        ]
+
+DiplomatsFormSet = forms.inlineformset_factory(
+    models.Ship,
+    models.Ship.diplomats.through,
+    form=BaseConnectionForm,
+    exclude=['is_locked'],
+    extra=1,
+)

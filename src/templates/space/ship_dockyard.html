@@ -16,6 +16,13 @@
                 Имейте в виду, после выхода на корабль уже нельзя будет навесить доп. оборудование.</p>
 
             <p>Также рекомендуем вам заключить договора с дружественными кораблями, чтобы случайно не ввязаться в ненужный конфликт.</p>
+            <p>{% if object.diplomats.exists %}
+                Дипломаты: {% for diplomat in object.diplomats.all %}{{ diplomat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            {% else %}
+                Дипломаты не назначены
+            {% endif %}
+                (<a href="{% url "space:ship_diplomats" object.id %}">изменить</a>)
+            <p>
 
             <form action="" method="POST">
                 {% csrf_token %}

@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, DetailView, FormView
 
 from roles.decorators import class_view_decorator, login_required, role_required
@@ -91,7 +92,35 @@ class ShipFleetView(FormView):
 @class_view_decorator(login_required)
 @class_view_decorator(role_required)
 class ShipDiplomatsView(TemplateView):
-    pass
+    """Дипломаты корабля"""
+    template_name = 'space/ship_diplomacy.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(models.Ship, pk=kwargs['pk'])
+
+        if request.role != self.object.owner:
+            raise Http404
+
+        return super(ShipDiplomatsView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'formset': forms.DiplomatsFormSet(instance=self.object),
+            'object': self.object,
+        }
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        context = {
+            'formset': forms.DiplomatsFormSet(request.POST, instance=self.object),
+            'object': self.object,
+        }
+
+        if context['formset'].is_valid():
+            context['formset'].save()
+            return HttpResponseRedirect(reverse('space:ship', args=[self.object.id]) + '?save=ok')
+        else:
+            return self.render_to_response(context)
 
 
 def _is_tactic(role):
@@ -109,7 +138,7 @@ class TacticsView(TemplateView):
             context['fleets'] = models.Fleet.objects.filter(navigator=self.request.role).order_by('point__name', 'name')
         else:
             context['error'] = 'Так получилось, что вы не космотактик. ' \
-                               'Вашей квалификации недостаточно, чтобы управлять кораблями'
+                               'Вашей квалификации недостаточно, чтобы управлять кораблями.'
 
         context['page'] = 'tactics'
         return context

@@ -18,6 +18,7 @@
     {% else %}
         Дипломаты не назначены
     {% endif %}
+        (<a href="{% url "space:ship_diplomats" object.id %}">изменить</a>)
     <p>
 
 {% endblock %}
