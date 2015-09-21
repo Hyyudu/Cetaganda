@@ -1,0 +1,22 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <div style="float: right">
+        <h2>Коды планет</h2>
+        {% for point in points %}
+            {{ point.id }} - {{ point }}<br>
+        {% endfor %}
+    </div>
+
+    <h1>Маршрут флота "{{ object.name }}"</h1>
+
+    <p>Текущее положение: {{ object.point }}.</p>
+
+
+    <p>Введите номера точек через пробелы:</p>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Сохранить"> &nbsp; <a href="{% url "space:tactics" %}">вернуться</a>
+    </form>
+{% endblock %}

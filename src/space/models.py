@@ -40,12 +40,12 @@ class Point(models.Model):
     resources = models.CharField(verbose_name='Ресурсы', max_length=10, blank=True, default='')
 
     def __unicode__(self):
-        return '%s (%s)' % (self.name, self.type)
+        return '%s (%s)' % (self.name, self.type[0])
 
     class Meta:
         verbose_name = 'Точка'
         verbose_name_plural = 'Точки'
-        ordering = ('name',)
+        ordering = ('name', 'type')
 
 
 class Transit(models.Model):
@@ -61,6 +61,7 @@ class Fleet(models.Model):
     name = models.CharField(verbose_name='Название', max_length=100)
     point = models.ForeignKey(Point, verbose_name='Позиция')
     navigator = models.ForeignKey(Role, verbose_name='Навигатор')
+    route = models.TextField(verbose_name='Заказанный маршрут', default='')
 
     class Meta:
         verbose_name = 'Флот'
@@ -72,6 +73,24 @@ class Fleet(models.Model):
     def ships_amount(self):
         return self.ship_set.count()
     ships_amount.short_description = 'Кораблей'
+
+    def distance(self):
+        return min(SHIPS[ship.type]['distance'] for ship in self.ship_set.all())
+
+    def route_points(self):
+        if not self.route:
+            return []
+
+        points = map(int, self.route.split())
+        all_points = {p.id: p for p in Point.objects.all()}
+        return [all_points[point] for point in points]
+
+    def human_route(self):
+        if not self.route:
+            return 'нет команд'
+
+        points = self.route_points()
+        return ' -> '.join(unicode(point) for point in points)
 
 
 SHIPS = {
@@ -120,7 +139,7 @@ class Ship(models.Model):
         null=True, blank=True, default=None,
         related_name='position',
     )
-    type = models.CharField(verbose_name='Тип', max_length=1, choices=SHIP_TYPES)
+    type = models.CharField(verbose_name='Тип', max_length=10, choices=SHIP_TYPES)
     name = models.CharField(verbose_name='Название', max_length=100)
     resources = JSONField(verbose_name='Ресурсы', default='{}')  # для транспорта
     diplomats = models.ManyToManyField(Role, verbose_name='Дипломаты', related_name='responsible_for')

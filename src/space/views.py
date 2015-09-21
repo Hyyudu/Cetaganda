@@ -172,5 +172,37 @@ class FleetSplitView(TemplateView):
         return HttpResponseRedirect(reverse('space:tactics'))
 
 
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
+class FleetRouteView(FormView):
+    template_name = 'space/tactics_route.html'
+    form_class = forms.RouteForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not _is_tactic(self.request.role):
+            raise Http404
+
+        self.object = models.Fleet.objects.get(pk=kwargs['pk'])
+        if self.object.navigator != request.role:
+            raise Http404
+
+        return super(FleetRouteView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(FleetRouteView, self).get_context_data(**kwargs)
+        context['points'] = models.Point.objects.all()
+        context['object'] = self.object
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(FleetRouteView, self).get_form_kwargs()
+        kwargs['fleet'] = self.object
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('space:tactics'))
+
+
 class DiplomacyView(TemplateView):
     pass

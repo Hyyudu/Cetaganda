@@ -19,6 +19,7 @@ class AllianceAdmin(admin.ModelAdmin):
 @admin.register(models.Transit)
 class TransitAdmin(admin.ModelAdmin):
     list_display = ('point1', 'point2')
+    raw_id_fields = ('point1', 'point2')
 
 
 @admin.register(models.Fleet)

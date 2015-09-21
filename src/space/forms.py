@@ -113,6 +113,7 @@ class TacticsMergeForm(forms.Form):
         merged_fleet = models.Fleet.objects.create(
             name=self.cleaned_data['name'],
             point=self.cleaned_data['fleet1'].point,
+            route=self.cleaned_data['fleet1'].route,
             navigator=self.role,
         )
 
@@ -122,3 +123,41 @@ class TacticsMergeForm(forms.Form):
                 ship.save()
 
             fleet.delete()
+
+
+class RouteForm(forms.Form):
+    route = forms.CharField(label='Маршрут', required=False, widget=forms.TextInput(attrs={'style': 'width: 500px'}))
+
+    def __init__(self, *args, **kwargs):
+        self.fleet = kwargs.pop('fleet')
+        super(RouteForm, self).__init__(*args, **kwargs)
+
+    def clean_route(self):
+        if not self.cleaned_data['route']:
+            return ''
+
+        try:
+            points = map(int, self.cleaned_data['route'].strip().split())
+        except TypeError:
+            raise forms.ValidationError('Непонятный формат маршрута. Введите числа, разделенные пробелами.')
+
+        all_points = {p.id: p for p in models.Point.objects.all()}
+        for point in points:
+            if point not in all_points:
+                raise forms.ValidationError('Неизвестная точка %s' % point)
+
+        prev_point = self.fleet.point_id
+        for point in points:
+            if not (models.Transit.objects.filter(point1=prev_point, point2=point).exists() or
+                    models.Transit.objects.filter(point2=prev_point, point1=point).exists()):
+                raise forms.ValidationError(
+                    'Нет перехода между точками %s (%s) и %s (%s). Измените маршрут.' %
+                    (prev_point, all_points[prev_point], point, all_points[point])
+                )
+            prev_point = point
+
+        return ' '.join(map(unicode, points))
+
+    def save(self):
+        self.fleet.route = self.cleaned_data['route']
+        self.fleet.save()
