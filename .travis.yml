@@ -1,4 +1,4 @@
-# http://lint.travis-ci.org/glader/Uralcon
+# http://lint.travis-ci.org/glader/Cetaganda
 
 language: python
 
@@ -7,7 +7,7 @@ python:
   - "pypy"
 
 env:
-  - DJANGO=Django==1.8.2
+  - DJANGO=Django==1.8.3
 
 before_install:
   - sudo apt-get update -qq
@@ -24,7 +24,7 @@ before_script:
   - pyflakes -x W src
 
 script:
-  - cd src && py.test --ds=testing_settings
+  - cd src && py.test --ds=testing_settings --nomigrations
 
 notifications:
   email:

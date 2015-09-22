@@ -197,4 +197,4 @@ def local_migrate():
 
 
 def local_test():
-    local('cd src && ..\\ENV\\Scripts\\py.test --ds=testing_settings')
+    local('cd src && ..\\ENV\\Scripts\\py.test --ds=testing_settings --nomigrations')
