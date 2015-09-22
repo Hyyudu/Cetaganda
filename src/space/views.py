@@ -253,4 +253,32 @@ class DiplomacyView(TemplateView):
 
 
 class FriendshipView(TemplateView):
-    template_name = ''
+    """Корабли, на которые не нападает текущий корабль"""
+    template_name = 'space/ship_friends.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not _is_diplomat(self.request.role):
+            raise Http404
+
+        self.object = get_object_or_404(self.request.role.responsible_for.filter(is_alive=True), pk=kwargs['pk'])
+
+        return super(FriendshipView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'formset': forms.FriendshipFormSet(instance=self.object),
+            'object': self.object,
+        }
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        context = {
+            'formset': forms.FriendshipFormSet(request.POST, instance=self.object),
+            'object': self.object,
+        }
+
+        if context['formset'].is_valid():
+            context['formset'].save()
+            return HttpResponseRedirect(reverse('space:diplomacy') + '?save=ok')
+        else:
+            return self.render_to_response(context)

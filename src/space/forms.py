@@ -180,3 +180,11 @@ DiplomatsFormSet = forms.inlineformset_factory(
     exclude=['is_locked'],
     extra=1,
 )
+
+FriendshipFormSet = forms.inlineformset_factory(
+    models.Ship,
+    models.Ship.friends.through,
+    fk_name='from_ship',
+    exclude=['is_locked'],
+    extra=3,
+)

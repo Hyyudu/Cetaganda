@@ -160,6 +160,9 @@ class Ship(models.Model):
     def get_absolute_url(self):
         return reverse('space:ship', args=[self.id])
 
+    def __unicode__(self):
+        return self.name
+
     @property
     def state(self):
         if not self.is_alive:
