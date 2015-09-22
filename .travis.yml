@@ -6,12 +6,20 @@ python:
   - "2.7"
   - "pypy"
 
+sudo: false
+
 env:
   - DJANGO=Django==1.8.3
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev
+addons:
+  apt:
+    packages:
+      - libtiff4-dev
+      - libjpeg8-dev
+      - zlib1g-dev
+      - libfreetype6-dev
+      - liblcms2-dev
+      - libwebp-dev
 
 install:
   - pip install pep8
