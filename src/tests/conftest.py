@@ -42,7 +42,7 @@ def users():
 @pytest.fixture()
 def role_fields():
     GameField.objects.create(
-        name='Альянс',
+        name='Подданство',
         type=4,
         additional='Барраяр, Цетаганда'
     )
@@ -64,7 +64,7 @@ def roles(users, role_fields):
         name='Frodo',
     )
     frodo_role.set_field('Профессия', 'экономист')
-    frodo_role.set_field('Альянс', 'Барайяр')
+    frodo_role.set_field('Подданство', 'Барраяр')
 
     legolas_role = Role.objects.create(
         user=users['legolas'],

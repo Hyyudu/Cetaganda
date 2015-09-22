@@ -90,7 +90,18 @@ class Fleet(models.Model):
             return 'нет команд'
 
         points = self.route_points()
-        return ' -> '.join(unicode(point) for point in points)
+        return ' -> '.join(unicode(point) for point in [self.point] + points)
+
+    def step(self):
+        if not self.route:
+            return
+
+        points = self.route_points()
+        print "MOVE TO", points[0]
+        self.ship_set.all().update(position=points[0])
+        self.point = points[0]
+        self.route = ' '.join(str(p.id) for p in points[1:])
+        self.save()
 
 
 SHIPS = {
