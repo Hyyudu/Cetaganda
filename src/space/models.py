@@ -13,6 +13,7 @@ from roles.models import Role, GenericManager
 class Alliance(models.Model):
     name = models.CharField(verbose_name='Название', max_length=100)
     role_name = models.CharField(verbose_name='Название у роли', max_length=100)
+    resources = JSONField(verbose_name='Ресурсы', default='{}')
 
     def __unicode__(self):
         return self.name
@@ -37,7 +38,7 @@ class Point(models.Model):
     type = models.CharField(verbose_name='Тип', max_length=20, choices=TYPES)
     alliance = models.ForeignKey(Alliance, verbose_name='Альянс', null=True, blank=True, default=None)
     name = models.CharField(verbose_name='Название', max_length=100)
-    resources = models.CharField(verbose_name='Ресурсы', max_length=10, blank=True, default='')
+    resources = JSONField(verbose_name='Ресурсы', default='{}')
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.type[0])
@@ -74,7 +75,7 @@ class Fleet(models.Model):
         return self.ship_set.count()
     ships_amount.short_description = 'Кораблей'
 
-    def distance(self):
+    def get_distance(self):
         return min(SHIPS[ship.type]['distance'] for ship in self.ship_set.all())
 
     def route_points(self):
@@ -97,7 +98,6 @@ class Fleet(models.Model):
             return
 
         points = self.route_points()
-        print "MOVE TO", points[0]
         self.ship_set.all().update(position=points[0])
         self.point = points[0]
         self.route = ' '.join(str(p.id) for p in points[1:])
@@ -155,7 +155,11 @@ class Ship(models.Model):
     resources = JSONField(verbose_name='Ресурсы', default='{}')  # для транспорта
     diplomats = models.ManyToManyField(Role, verbose_name='Дипломаты', related_name='responsible_for')
     is_alive = models.BooleanField(verbose_name='Живой', default=True)
-    home = models.ForeignKey(Point, verbose_name='Положение', null=True, blank=True, default=None, related_name='home')
+    home = models.ForeignKey(
+        Point, verbose_name='Порт приписки',
+        null=True, blank=True, default=None,
+        related_name='home',
+    )
     friends = models.ManyToManyField('self', verbose_name='Дружба')
 
     objects = GenericManager(is_alive=True)
