@@ -69,14 +69,17 @@ class Fleet(models.Model):
         verbose_name_plural = 'Флота'
 
     def __unicode__(self):
-        return "%s (%s)" % (self.name, self.point)
+        return '%s (%s)' % (self.name, self.point)
 
     def ships_amount(self):
         return self.ship_set.count()
     ships_amount.short_description = 'Кораблей'
 
     def get_distance(self):
-        return min(SHIPS[ship.type]['distance'] for ship in self.ship_set.all())
+        ships = list(self.ship_set.all())
+        if any(ship.type == 't' for ship in ships):
+            return 1
+        return min(SHIPS[ship.type]['distance'] for ship in ships)
 
     def route_points(self):
         if not self.route:

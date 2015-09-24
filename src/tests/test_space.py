@@ -135,6 +135,27 @@ def test_transport(roles, points, alliances):
     assert alliance.resources == {'sheep1': 1}
 
 
+def test_transport_many_resources(roles, points, alliances):
+    ship, fleet = create_ship('t', roles['frodo'], roles['legolas'], points[0])
+    alliance = refresh(alliances[0])
+    assert alliance.resources == {}
+
+    points[1].resources = ['sheep1']
+    points[1].save()
+    points[2].resources = ['sheep2']
+    points[2].save()
+
+    fleet.route = ' '.join(map(str, [points[3].id, points[4].id, points[1].id, points[4].id, points[5].id,
+                               points[2].id, points[5].id, points[3].id, points[0].id]))
+    fleet.save()
+
+    for i in xrange(9):
+        move_fleets()
+
+    alliance = refresh(alliance)
+    assert alliance.resources == {'sheep1': 1, 'sheep2': 1}
+
+
 def test_station_move(roles, points, alliances):
     """ Станция перемещается только с транспортом """
     ship, fleet = create_ship('s', roles['frodo'], roles['legolas'], points[0])
