@@ -47,22 +47,33 @@ class BuyView(FormView):
             product.is_finished = True
             product.save()
 
-            product.product.change_owner(self.request.role)
+            stuff = product.product
+            stuff.change_owner(self.request.role)
             cost = product.cost
 
             money = product.seller.get_field(settings.MONEY_FIELD) or 0
             product.seller.set_field(settings.MONEY_FIELD, money + cost)
 
+            product.seller.records.create(
+                category='Маркет',
+                message='Вы продали %s за %s' % (stuff.market_name(), cost)
+            )
         else:
             # Бесконечный товар
             try:
-                product['class'].create(product['type'], self.request.role)
+                stuff = product['class'].create(product['type'], self.request.role)
                 cost = product['cost']
             except Exception as e:
                 return self.render_to_response({'error': e})
 
         money = self.request.role.get_field(settings.MONEY_FIELD) or 0
         self.request.role.set_field(settings.MONEY_FIELD, money - cost)
+
+        self.request.role.records.create(
+            category='Маркет',
+            message='Вы приобрели %s за %s' % (stuff.market_name(), cost)
+        )
+
         return HttpResponseRedirect(reverse('market:index'))
 
 

@@ -196,5 +196,5 @@ def local_migrate():
     local('cd src && ..\\ENV\\Scripts\\python manage.py migrate')
 
 
-def local_test():
-    local('cd src && ..\\ENV\\Scripts\\py.test --ds=testing_settings --nomigrations -vv -x')
+def local_test(args=''):
+    local('cd src && ..\\ENV\\Scripts\\py.test %s --ds=testing_settings --nomigrations -vv -x' % args)

@@ -55,6 +55,10 @@ def role_fields():
         name='Ранг',
         type=3,
     )
+    GameField.objects.create(
+        name='Деньги',
+        type=3,
+    )
 
 
 @pytest.fixture()
