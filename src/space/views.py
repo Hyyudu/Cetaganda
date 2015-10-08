@@ -35,7 +35,7 @@ class ShipView(DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if request.user.has_perm('space.can_edit_ship') or request.user == self.object.owner:
+        if request.user.has_perm('space.can_edit_ship') or request.role == self.object.owner:
             return super(ShipView, self).dispatch(request, *args, **kwargs)
 
         raise Http404
@@ -71,7 +71,7 @@ class ShipFleetView(FormView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = models.Ship.objects.get(pk=kwargs['pk'])
-        if request.user.has_perm('space.can_edit_ship') or request.user == self.object.owner:
+        if request.user.has_perm('space.can_edit_ship') or request.role == self.object.owner:
             return super(ShipFleetView, self).dispatch(request, *args, **kwargs)
 
         raise Http404
