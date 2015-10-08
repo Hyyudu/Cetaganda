@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'market',
     'news',
     'post_logger',
+    'register',
     'roles',
     'science',
     'space',

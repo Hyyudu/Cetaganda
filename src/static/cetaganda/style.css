@@ -206,3 +206,17 @@ path.arc {
 .not_in_game {
     fill: #999;
 }
+
+
+.record-table {
+    border-collapse: collapse;
+}
+
+.record-table tr {
+    border-top: 1px solid grey;
+    border-bottom: 1px solid grey;
+}
+
+.record-table td {
+    padding: 5px 20px 5px 5px;
+}

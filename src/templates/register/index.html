@@ -1,0 +1,26 @@
+{% extends "inner.html" %}
+{% load staticpages %}
+{% load staticfiles %}
+
+{% block inner_content %}
+    <h1>Журнал событий</h1>
+
+    <table class="record-table">
+        <thead>
+            <tr>
+                <th>Время</th>
+                <th>Категория</th>
+                <th>Сообщение</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record.dt }}</td>
+                    <td>{{ record.category }}</td>
+                    <td>{{ record.message }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

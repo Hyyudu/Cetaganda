@@ -29,8 +29,8 @@ class CabinetForm(forms.Form):
 
         self.user = user
         try:
-            self.userinfo = models.UserInfo.objects.get(user=self.user)
-        except models.UserInfo.DoesNotExist:
+            self.userinfo = models.UserInfo.objects.filter(user=self.user)[0]
+        except (models.UserInfo.DoesNotExist, IndexError):
             try:
                 self.userinfo = models.UserInfo.objects.get(user=self.user)
             except models.UserInfo.DoesNotExist:

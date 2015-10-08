@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^market/', include('market.urls', namespace='market')),
     url(r'^news/', include('news.urls')),
     url(r'^redactor/', include('redactor.urls')),
+    url(r'^register/', include('register.urls', namespace='register')),
     url(r'^roles/', include('roles.urls', namespace='roles')),
     url(r'^science/', include('science.urls', namespace='science')),
     url(r'^space/', include('space.urls', namespace='space')),
