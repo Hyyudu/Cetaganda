@@ -11,7 +11,7 @@
             <p><strong>{{ fleet.name }}</strong>: {{ fleet.point }}
                 {% if fleet.ship_set.count > 1 %}(<a href="{% url "space:fleet_split" fleet.id %}">разделить</a>){% endif %}<br>
                 Заказанный маршрут: {{ fleet.human_route }} (<a href="{% url "space:fleet_route" fleet.id %}">изменить</a>)<br>
-                Скорость: {{ fleet.distance }}
+                Скорость: {{ fleet.get_distance }}
             </p>
             <ul>
                 {% for ship in fleet.ship_set.all %}
