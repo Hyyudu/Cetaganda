@@ -35,9 +35,9 @@ def points():
     return [p1, p2, p3, tr1, tr2, tr3]
 
 
-def create_ship(type, owner, navigator, position, fleet=None):
+def create_ship(type, owner, navigator, position, fleet=None, name='ship'):
     ship = Ship.objects.create(
-        name='ship',
+        name=name,
         owner=owner,
         alliance=Alliance.get_alliance(owner),
         in_space=True,
@@ -47,7 +47,7 @@ def create_ship(type, owner, navigator, position, fleet=None):
     )
 
     if not fleet:
-        fleet = Fleet.objects.create(name='fleet', navigator=navigator, point=ship.position)
+        fleet = Fleet.objects.create(name=name + '_fleet', navigator=navigator, point=ship.position)
     ship.fleet = fleet
     ship.save()
     return ship, fleet

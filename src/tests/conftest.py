@@ -35,6 +35,7 @@ def users():
         'frodo': create_user('frodo'),
         'legolas': create_user('legolas'),
         'aragorn': create_user('aragorn'),
+        'boromir': create_user('boromir'),
         'gendalf': create_user('gendalf'),
     }
 
@@ -75,6 +76,7 @@ def roles(users, role_fields):
         name='Legolas',
     )
     legolas_role.set_field('Профессия', 'космотактик')
+    legolas_role.set_field('Подданство', 'Цетаганда')
     legolas_role.set_field('Ранг', 1)
 
     aragorn_role = Role.objects.create(
@@ -82,9 +84,18 @@ def roles(users, role_fields):
         name='Aragorn',
     )
     aragorn_role.set_field('Профессия', 'дипломат')
+    aragorn_role.set_field('Подданство', 'Барраяр')
+
+    boromir_role = Role.objects.create(
+        user=users['boromir'],
+        name='Boromir',
+    )
+    boromir_role.set_field('Профессия', 'космотактик')
+    boromir_role.set_field('Подданство', 'Цетаганда')
 
     return {
         'frodo': frodo_role,
         'legolas': legolas_role,
         'aragorn': aragorn_role,
+        'boromir': boromir_role,
     }

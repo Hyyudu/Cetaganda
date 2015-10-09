@@ -38,7 +38,7 @@ class Point(models.Model):
     type = models.CharField(verbose_name='Тип', max_length=20, choices=TYPES)
     alliance = models.ForeignKey(Alliance, verbose_name='Альянс', null=True, blank=True, default=None)
     name = models.CharField(verbose_name='Название', max_length=100)
-    resources = JSONField(verbose_name='Ресурсы', default='{}')
+    resources = JSONField(verbose_name='Ресурсы', default='[]')
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.type[0])
@@ -101,10 +101,20 @@ class Fleet(models.Model):
             return
 
         points = self.route_points()
-        self.ship_set.all().update(position=points[0])
         self.point = points[0]
         self.route = ' '.join(str(p.id) for p in points[1:])
         self.save()
+        self.navigator.records.create(
+            category='Космос',
+            message='Ваш флот "%s" перемещается в точку "%s"' % (self.name, self.point),
+        )
+
+        self.ship_set.all().update(position=self.point)
+        for ship in self.ship_set.all():
+            ship.owner.records.create(
+                category='Космос',
+                message='Ваш корабль "%s" перемещается в точку "%s"' % (ship.name, self.point),
+            )
 
 
 SHIPS = {
@@ -113,30 +123,35 @@ SHIPS = {
         'distance': 1,
         'hit': '56789',
         'cost': 1000,
+        'hit_priority': 3,
     },
     'k': {
         'name': 'Крейсер',
         'distance': 2,
         'hit': '1234',
         'cost': 2000,
+        'hit_priority': 1,
     },
     's': {
         'name': 'Станция',
         'distance': 0,
         'hit': '2468',
         'cost': 1500,
+        'hit_priority': 5,
     },
     'r': {
         'name': 'Разведчик',
         'distance': 2,
         'hit': '150',
         'cost': 300,
+        'hit_priority': 2,
     },
     't': {
         'name': 'Транспорт',
         'distance': 1,
         'hit': '37',
         'cost': 2000,
+        'hit_priority': 4,
     },
 }
 
@@ -147,7 +162,9 @@ class Ship(models.Model):
     owner = models.ForeignKey(Role, verbose_name='Владелец', related_name='ships')
     alliance = models.ForeignKey(Alliance, verbose_name='Альянс', related_name='alliance_ships')
     in_space = models.BooleanField(verbose_name='В космосе', default=False)
-    fleet = models.ForeignKey(Fleet, verbose_name='Флот', null=True, blank=True, default=None)
+    fleet = models.ForeignKey(
+        Fleet, verbose_name='Флот', null=True, blank=True, default=None, on_delete=models.SET_DEFAULT
+    )
     position = models.ForeignKey(
         Point, verbose_name='Положение',
         null=True, blank=True, default=None,
@@ -233,5 +250,14 @@ class Ship(models.Model):
         self.alliance = alliance
         self.owner = owner
         self.save()
+
+    def destroy(self):
+        self.is_alive = False
+        self.save()
+
+        print "CHECK", self.fleet.ship_set.filter(is_alive=True).exists()
+        if not self.fleet.ship_set.filter(is_alive=True).exists():
+            self.fleet.delete()
+
 
 Goods.register(Ship)
