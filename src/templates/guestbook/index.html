@@ -16,7 +16,7 @@
                 <tr>
                     <td><small>{{ post.dt }}</small></td>
                     <td>{{ post.author }}</td>
-                    <td>{{ post.content }}</td>
+                    <td {% if post.author.user.is_superuser %}style="font-weight: bold"{% endif %}>{{ post.content }}</td>
                 </tr>
             {% endfor %}
         </tbody>
