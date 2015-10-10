@@ -153,7 +153,7 @@ SHIPS = {
     },
     't': {
         'name': 'Транспорт',
-        'distance': 1,
+        'distance': 2,
         'hit': '37',
         'cost': 500,
         'hit_priority': 4,
@@ -260,7 +260,6 @@ class Ship(models.Model):
         self.is_alive = False
         self.save()
 
-        print "CHECK", self.fleet.ship_set.filter(is_alive=True).exists()
         if not self.fleet.ship_set.filter(is_alive=True).exists():
             self.fleet.delete()
 

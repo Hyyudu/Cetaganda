@@ -1,11 +1,16 @@
 # coding: utf-8
 from __future__ import unicode_literals
 import random
+import logging
 
 from space import models
 
+log = logging.getLogger('space')
+
 
 def move_fleets():
+    log.info('')
+    log.info('START TACTICS PHASE')
     ships = list(models.Ship.objects.all().order_by('position', 'name'))
 
     for fleet in models.Fleet.objects.all():
@@ -13,11 +18,13 @@ def move_fleets():
             continue
 
         distance = min(len(fleet.route_points()), fleet.get_distance())
+        log.info('Fleet "%s", route "%s", distance "%s"', fleet.name, fleet.human_route(), distance)
 
         if distance:
             for i in xrange(distance):
                 if fleet.route:
                     fleet.step()
+                    log.info('Fleet "%s" now at "%s"', fleet.name, fleet.point)
 
                     alive = fight(fleet)
                     if not alive:
@@ -42,16 +49,17 @@ def move_fleets():
             report += 'Корабль "%s" (%s) переместился в "%s"\n' % (ship.name, ship.position, new_ship.position)
 
     models.Report.objects.create(content=report)
+    log.info('FINISH TACTICS PHASE')
 
 
 def fight(fleet):
     if fleet.is_silent():
-        print 'Fleet "%s" is silent' % fleet.name
+        log.info('Fleet "%s" is silent' % fleet.name)
         return True
 
     for enemy_fleet in models.Fleet.objects.filter(point=fleet.point).exclude(navigator=fleet.navigator):
         if enemy_fleet.is_silent():
-            print 'Enemy fleet "%s" is silent' % fleet.name
+            log.info('Enemy fleet "%s" is silent' % fleet.name)
             continue
 
         alive = fight_with_enemy(fleet, enemy_fleet)
@@ -62,25 +70,30 @@ def fight(fleet):
 
 
 def fight_with_enemy(fleet, enemy_fleet):
-    print 'Fight "%s" with "%s"' % (fleet.name, enemy_fleet.name)
+    log.info('Fight "%s" with "%s"' % (fleet.name, enemy_fleet.name))
 
     def _try_shoot(ship, target):
-        if target.is_alive and not ship.friends.filter(id=target.id).exists():
-            print "HIT from ", ship, " TO ", target
-            target.destroy()
+        if not target.is_alive:
+            return
 
-            ship.owner.records.create(
-                category='Космос',
-                message='Ваш корабль "%s" попадает по кораблю "%s"' % (ship, target),
-            )
-            target.owner.records.create(
-                category='Космос',
-                message='Ваш корабль "%s" уничтожен залпом "%s"' % (target, ship),
-            )
-            return True
+        if ship.friends.filter(id=target.id).exists() and target.friends.filter(id=ship.id).exists():
+            return
+
+        log.info("HIT from %s TO %s", ship, target)
+        target.destroy()
+
+        ship.owner.records.create(
+            category='Космос',
+            message='Ваш корабль "%s" попадает по кораблю "%s"' % (ship, target),
+        )
+        target.owner.records.create(
+            category='Космос',
+            message='Ваш корабль "%s" уничтожен залпом "%s"' % (target, ship),
+        )
+        return True
 
     while True:
-        print "Turn"
+        log.info('Turn')
 
         targets = False
 
@@ -98,9 +111,9 @@ def fight_with_enemy(fleet, enemy_fleet):
 
         for ship in our_side:
             dice = str(random.randint(0, 9))
-            print "DICE", dice
+            log.info('DICE %s', dice)
             if dice in models.SHIPS[ship.type]['hit']:
-                print "SHOT", ship
+                log.info('SHOT %s', ship)
                 our_shots.append(ship)
             else:
                 ship.owner.records.create(
@@ -108,13 +121,13 @@ def fight_with_enemy(fleet, enemy_fleet):
                     message='Ваш корабль "%s" промахивается' % ship
                 )
 
-        print "OUR", our_shots
+        log.info('OUR_SHOTS %s', our_shots)
 
         for ship in their_side:
             dice = str(random.randint(0, 9))
-            print "DICE", dice
+            log.info('DICE %s', dice)
             if dice in models.SHIPS[ship.type]['hit']:
-                print "SHOT", ship
+                log.info('ENEMY SHOT %s', ship)
                 their_shots.append(ship)
             else:
                 ship.owner.records.create(
@@ -122,7 +135,7 @@ def fight_with_enemy(fleet, enemy_fleet):
                     message='Ваш корабль "%s" промахивается' % ship
                 )
 
-        print "THEIR", their_shots
+        log.info('THEIR_SHOTS %s', their_shots)
 
         for shooting_ship in our_shots:
             for target in their_side:

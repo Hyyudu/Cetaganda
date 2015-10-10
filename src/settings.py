@@ -156,6 +156,12 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'post.log'),
             'formatter': 'verbose',
         },
+        'space_log': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'space.log'),
+            'formatter': 'verbose',
+        },
         'mail_admin': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -169,6 +175,11 @@ LOGGING = {
         },
         'post': {
             'handlers': ['post_log'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'space': {
+            'handlers': ['space_log'],
             'level': 'INFO',
             'propagate': False,
         },
