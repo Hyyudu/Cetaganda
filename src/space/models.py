@@ -117,41 +117,45 @@ class Fleet(models.Model):
                 message='Ваш корабль "%s" перемещается в точку "%s"' % (ship.name, self.point),
             )
 
+    def is_silent(self):
+        # Флот из одного разведчика не участвует в боях
+        return self.ship_set.count() == 1 and self.ship_set.filter(type='r').count() == 1
+
 
 SHIPS = {
     'l': {
         'name': 'Линкор',
         'distance': 1,
         'hit': '56789',
-        'cost': 1000,
+        'cost': 5000,
         'hit_priority': 3,
     },
     'k': {
         'name': 'Крейсер',
         'distance': 2,
         'hit': '1234',
-        'cost': 2000,
+        'cost': 1000,
         'hit_priority': 1,
     },
     's': {
         'name': 'Станция',
         'distance': 0,
         'hit': '2468',
-        'cost': 1500,
+        'cost': 10000,
         'hit_priority': 5,
     },
     'r': {
         'name': 'Разведчик',
         'distance': 2,
         'hit': '150',
-        'cost': 300,
+        'cost': 4000,
         'hit_priority': 2,
     },
     't': {
         'name': 'Транспорт',
         'distance': 1,
         'hit': '37',
-        'cost': 2000,
+        'cost': 500,
         'hit_priority': 4,
     },
 }

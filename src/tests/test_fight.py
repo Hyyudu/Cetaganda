@@ -5,7 +5,7 @@ import random
 import pytest
 from mock import patch
 
-from space.models import Ship, Fleet
+from space.models import Ship, Fleet, Report
 from space.tactics import move_fleets
 from register.models import Record
 from tests.utils import refresh
@@ -52,3 +52,8 @@ def test_fight(roles, points, alliances):
     assert not ship2.is_alive
 
     assert not Fleet.objects.filter(id=fleet2.id).exists()
+
+    assert Report.objects.get().content == \
+        '''Корабль "frodoship" (Переход 1 (t)) переместился в "Переход 2 (t)"
+Корабль "legoship" (Переход 2 (t)) уничтожен
+'''

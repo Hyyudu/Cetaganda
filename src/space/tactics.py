@@ -6,6 +6,8 @@ from space import models
 
 
 def move_fleets():
+    ships = list(models.Ship.objects.all().order_by('position', 'name'))
+
     for fleet in models.Fleet.objects.all():
         if not fleet.route:
             continue
@@ -25,11 +27,46 @@ def move_fleets():
 
                     unloading(fleet)
 
+    new_ships = {ship.id: ship for ship in models.Ship.objects.all()}
+    report = ''
+    for ship in ships:
+        new_ship = new_ships.get(ship.id)
+        if not new_ship:
+            report += 'Корабль "%s" (%s) уничтожен\n' % (ship.name, ship.position)
+            continue
+
+        if ship.owner != new_ship.owner:
+            report += 'Корабль "%s" (%s) сменил владельца на "%s"\n' % (ship.name, ship.position, new_ship.owner)
+
+        if ship.position != new_ship.position:
+            report += 'Корабль "%s" (%s) переместился в "%s"\n' % (ship.name, ship.position, new_ship.position)
+
+    models.Report.objects.create(content=report)
+
 
 def fight(fleet):
+    if fleet.is_silent():
+        print 'Fleet "%s" is silent' % fleet.name
+        return True
+
+    for enemy_fleet in models.Fleet.objects.filter(point=fleet.point).exclude(navigator=fleet.navigator):
+        if enemy_fleet.is_silent():
+            print 'Enemy fleet "%s" is silent' % fleet.name
+            continue
+
+        alive = fight_with_enemy(fleet, enemy_fleet)
+        if not alive:
+            return False
+
+    return True
+
+
+def fight_with_enemy(fleet, enemy_fleet):
+    print 'Fight "%s" with "%s"' % (fleet.name, enemy_fleet.name)
+
     def _try_shoot(ship, target):
         if target.is_alive and not ship.friends.filter(id=target.id).exists():
-            print "HIT from ", ship, " TO", target
+            print "HIT from ", ship, " TO ", target
             target.destroy()
 
             ship.owner.records.create(
@@ -54,7 +91,7 @@ def fight(fleet):
             return False
 
         their_shots = []
-        their_side = models.Ship.objects.exclude(fleet=fleet)
+        their_side = enemy_fleet.ship_set.all()
         their_side = sorted(their_side, key=lambda ship: models.SHIPS[ship.type]['hit_priority'])
         if not their_side:
             return True
