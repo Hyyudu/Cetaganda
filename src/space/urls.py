@@ -16,4 +16,6 @@ urlpatterns = [
     url('^ship/(?P<pk>\d+)/fleet$', views.ShipFleetView.as_view(), name='ship_fleet'),
     url('^ship/(?P<pk>\d+)/diplomats$', views.ShipDiplomatsView.as_view(), name='ship_diplomats'),
     url('^ship/(?P<pk>\d+)/friendship', views.FriendshipView.as_view(), name='ship_friendship'),
+    url('^photos$', views.PicturesView.as_view(), name='pictures'),
+    url('^photos/request$', views.RequestPictureView.as_view(), name='pictures_request'),
 ]

@@ -34,3 +34,9 @@ class ShipAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return models.Ship.all
+
+
+@admin.register(models.Picture)
+class PictureAdmin(admin.ModelAdmin):
+    list_display = ('requester', 'point', 'direction', 'photo')
+    raw_id_fields = ('requester', 'point')

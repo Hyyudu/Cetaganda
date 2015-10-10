@@ -286,3 +286,30 @@ class FriendshipView(TemplateView):
             return HttpResponseRedirect(reverse('space:diplomacy') + '?save=ok')
         else:
             return self.render_to_response(context)
+
+
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
+class PicturesView(TemplateView):
+    template_name = 'space/pictures.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PicturesView, self).get_context_data(**kwargs)
+        context['pictures'] = models.Picture.objects.filter(requester=self.request.role).order_by('-dt')
+        return context
+
+
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
+class RequestPictureView(FormView):
+    template_name = 'space/pictures_request.html'
+    form_class = forms.RequestPictureForm
+
+    def get_form_kwargs(self):
+        kwargs = super(RequestPictureView, self).get_form_kwargs()
+        kwargs['requester'] = self.request.role
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('space:pictures'))

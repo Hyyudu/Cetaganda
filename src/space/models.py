@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
+from yafotki.fields import YFField
 
 from jsonfield.fields import JSONField
 from market.models import Goods
@@ -261,3 +262,15 @@ class Ship(models.Model):
 
 
 Goods.register(Ship)
+
+
+class Picture(models.Model):
+    requester = models.ForeignKey(Role, verbose_name='Заказчик')
+    point = models.ForeignKey(Point, verbose_name='Откуда')
+    direction = models.CharField(verbose_name='Направление', max_length=255)
+    photo = YFField(upload_to='cetaganda', null=True, default=None)
+    dt = models.DateTimeField(verbose_name='Время', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Снимок'
+        verbose_name_plural = 'Снимки'

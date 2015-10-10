@@ -1,0 +1,34 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <h2>Фотоснимки</h2>
+
+    <p><a href="{% url "space:pictures_request" %}">Заказать</a>.</p>
+
+    <br>
+    <table class="record-table">
+        <thead>
+            <tr>
+                <th>Время</th>
+                <th>Откуда</th>
+                <th>Направление</th>
+                <th>Фотография</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for picture in pictures %}
+                <tr>
+                    <td><small>{{ picture.dt }}</small></td>
+                    <td>{{ picture.point }}</td>
+                    <td>{{ picture.direction }}</td>
+                    <td>{% if picture.photo %}
+                        <a href="{{ picture.photo.src }}"><img src="{{ picture.photo.src_150 }}"></a>
+                        {% else %}
+                        не готово
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

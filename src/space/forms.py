@@ -163,6 +163,50 @@ class RouteForm(forms.Form):
         self.fleet.save()
 
 
+class RequestPictureForm(forms.Form):
+    PICTURE_COST = 100
+    point = forms.IntegerField(label='Точка съемки', widget=forms.Select)
+    direction = forms.CharField(label='Направление')
+
+    def __init__(self, *args, **kwargs):
+        self.requester = kwargs.pop('requester')
+        super(RequestPictureForm, self).__init__(*args, **kwargs)
+
+        self.fields['point'].widget.choices = [
+            (planet.id, planet.name)
+            for planet in self.get_points()
+        ]
+
+    def get_points(self):
+        return models.Point.objects.filter(position__owner=self.requester).distinct().order_by('name', 'id')
+
+    def clean_point(self):
+        try:
+            point = models.Point.objects.get(pk=self.cleaned_data['point'])
+            if point in self.get_points():
+                return point
+            else:
+                raise forms.ValidationError('Нет возможности произвести съемку с этой позиции')
+        except models.Point.DoesNotExist:
+            raise forms.ValidationError('Неизвестная планета')
+
+    def clean(self):
+        if self.requester.get_field(settings.MONEY_FIELD) < self.PICTURE_COST:
+            raise forms.ValidationError('У вас недостаточно средств для заказа снимка')
+
+        return self.cleaned_data
+
+    def save(self, *args, **kwargs):
+        money = self.requester.get_field(settings.MONEY_FIELD) or 0
+        self.requester.set_field(settings.MONEY_FIELD, money - self.PICTURE_COST)
+
+        return models.Picture.objects.create(
+            requester=self.requester,
+            point=self.cleaned_data['point'],
+            direction=self.cleaned_data['direction'],
+        )
+
+
 class BaseConnectionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(BaseConnectionForm, self).__init__(*args, **kwargs)

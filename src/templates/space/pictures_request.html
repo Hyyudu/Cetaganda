@@ -1,0 +1,15 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <h2>Заказ фотоснимка</h2>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table>
+            {{ form }}
+            <tr><td colspan="2">
+                <input type="submit" value="Заказать"> &nbsp; или <a href="{% url "space:pictures" %}">вернуться</a>
+            </td></tr>
+        </table>
+    </form>
+{% endblock %}
