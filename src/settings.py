@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'yafotki',
 
     'bookkeeping',
+    'guestbook',
     'hack',
     'jsonfield',
     'market',

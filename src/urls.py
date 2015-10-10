@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^articles/', include('staticpages.urls')),
     url(r'^auth/', include('django.contrib.auth.urls')),
+    url(r'^guestbook/', include('guestbook.urls', namespace='guestbook')),
     url(r'^hack/', include('hack.urls', namespace='hack')),
     url(r'^market/', include('market.urls', namespace='market')),
     url(r'^news/', include('news.urls')),

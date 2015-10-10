@@ -1,0 +1,24 @@
+{% extends "inner.html" %}
+
+{% block inner_content %}
+    <h1>Чат</h1>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Написать">
+    </form>
+
+    <br>
+    <table class="record-table">
+        <tbody>
+            {% for post in posts %}
+                <tr>
+                    <td><small>{{ post.dt }}</small></td>
+                    <td>{{ post.author }}</td>
+                    <td>{{ post.content }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

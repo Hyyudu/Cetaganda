@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 
-from .models import News
+from news.models import News
 
 
 class NewsAdmin(admin.ModelAdmin):
@@ -15,11 +17,11 @@ class NewsAdmin(admin.ModelAdmin):
             for user in User.objects.all():
                 if user.get_profile().is_subscribed:
                     send_html_mail(
-                        u"Уралкон: новость на сайте",
+                        'Уралкон: новость на сайте',
                         news.content,
                         [user.email]
                     )
-    notify.short_description = u"Отправить письма"
+    notify.short_description = 'Отправить письма'
 
 
 def send_html_mail(subject, message, recipient_list):
@@ -27,7 +29,7 @@ def send_html_mail(subject, message, recipient_list):
         if not isinstance(recipient_list, list):
             recipient_list = [recipient_list]
         message = EmailMessage(subject, message, to=recipient_list)
-        message.content_subtype = "html"
+        message.content_subtype = 'html'
         message.send()
 
     except Exception:
