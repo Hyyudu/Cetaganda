@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.db import models
 from django.core.urlresolvers import reverse
+from django.db import models
 from yafotki.fields import YFField
 
 from jsonfield.fields import JSONField
@@ -274,3 +274,13 @@ class Picture(models.Model):
     class Meta:
         verbose_name = 'Снимок'
         verbose_name_plural = 'Снимки'
+
+
+class Report(models.Model):
+    content = models.TextField(verbose_name='Отчет')
+    dt = models.DateTimeField(auto_now_add=True, verbose_name='Время')
+
+    class Meta:
+        verbose_name = 'Отчет'
+        verbose_name_plural = 'Отчеты'
+        ordering = ('-dt',)

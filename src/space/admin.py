@@ -40,3 +40,8 @@ class ShipAdmin(admin.ModelAdmin):
 class PictureAdmin(admin.ModelAdmin):
     list_display = ('requester', 'point', 'direction', 'photo')
     raw_id_fields = ('requester', 'point')
+
+
+@admin.register(models.Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ('dt',)
