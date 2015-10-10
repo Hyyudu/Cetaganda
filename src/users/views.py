@@ -37,6 +37,11 @@ class RegistrationView(FormView):
     form_class = forms.RegistrationForm
     success_url = '/'
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('users:cabinet'))
+        return super(RegistrationView, self).dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         user, password = form.save()
 
@@ -57,6 +62,11 @@ class LoginView(FormView):
     template_name = 'users/login.html'
     form_class = forms.LoginForm
     success_url = '/'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('users:cabinet'))
+        return super(LoginView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         login(self.request, form.cleaned_data['user'])
