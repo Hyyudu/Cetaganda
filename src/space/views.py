@@ -237,6 +237,8 @@ class FleetRouteView(FormView):
         return HttpResponseRedirect(reverse('space:tactics'))
 
 
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
 class DiplomacyView(TemplateView):
     template_name = 'space/diplomacy.html'
 
@@ -252,6 +254,8 @@ class DiplomacyView(TemplateView):
         return context
 
 
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
 class FriendshipView(TemplateView):
     """Корабли, на которые не нападает текущий корабль"""
     template_name = 'space/ship_friends.html'
