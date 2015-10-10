@@ -283,6 +283,7 @@ class Picture(models.Model):
 class Report(models.Model):
     content = models.TextField(verbose_name='Отчет')
     dt = models.DateTimeField(auto_now_add=True, verbose_name='Время')
+    is_done = models.BooleanField(verbose_name='Выполнено', default=False)
 
     class Meta:
         verbose_name = 'Отчет'

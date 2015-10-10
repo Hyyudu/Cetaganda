@@ -35,10 +35,13 @@ class DeployForm(forms.Form):
         ship.home = self.cleaned_data['home']
         ship.save()
 
+        message = 'Корабль "%s" выведен на орбиту %s' % (ship.name, ship.position)
         self.role.records.create(
             category='Космос',
-            message='Корабль "%s" выведен на орбиту %s' % (ship.name, ship.position)
+            message=message
         )
+
+        models.Report.objects.create(content=message)
 
 
 class FleetForm(forms.Form):
