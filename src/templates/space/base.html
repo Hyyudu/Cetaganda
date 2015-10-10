@@ -4,10 +4,11 @@
     <div class="app_menu">
     <table cellspacing="20px">
         <tr>
-            <td {% if page == 'ships' %}class="active"{% endif %}><a href="{% url "space:index" %}">Корабли</a></td>
+            <td {% if page == 'all' %}class="active"{% endif %}><a href="{% url "space:all" %}">Реестр</a></td>
+            <td {% if page == 'ships' %}class="active"{% endif %}><a href="{% url "space:index" %}">Ваши корабли</a></td>
             <td {% if page == 'tactics' %}class="active"{% endif %}><a href="{% url "space:tactics" %}">Космотактика</a></td>
             <td {% if page == 'diplomacy' %}class="active"{% endif %}><a href="{% url "space:diplomacy" %}">Дипломатия</a></td>
-            <td {% if page == 'photos' %}class="active"{% endif %}><a href="{% url "space:pictures" %}">Фотографии</a></td>
+            <td {% if page == 'pictures' %}class="active"{% endif %}><a href="{% url "space:pictures" %}">Фотографии</a></td>
         </tr>
     </table></div>
 

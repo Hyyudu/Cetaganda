@@ -7,6 +7,7 @@ from space import views
 
 urlpatterns = [
     url('^$', views.IndexView.as_view(), name='index'),
+    url('^all$', views.ShipsView.as_view(), name='all'),
     url('^tactics$', views.TacticsView.as_view(), name='tactics'),
     url('^tactics/merge$', views.TacticsMergeView.as_view(), name='tactics_merge'),
     url('^fleet/(?P<pk>\d+)/split$', views.FleetSplitView.as_view(), name='fleet_split'),

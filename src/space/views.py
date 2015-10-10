@@ -27,6 +27,18 @@ class IndexView(TemplateView):
 
 @class_view_decorator(login_required)
 @class_view_decorator(role_required)
+class ShipsView(TemplateView):
+    template_name = 'space/ships.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ShipsView, self).get_context_data(**kwargs)
+        context['ships'] = models.Ship.objects.filter(in_space=True).order_by('name')
+        context['page'] = 'all'
+        return context
+
+
+@class_view_decorator(login_required)
+@class_view_decorator(role_required)
 class ShipView(DetailView):
     model = models.Ship
 
@@ -296,6 +308,7 @@ class PicturesView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PicturesView, self).get_context_data(**kwargs)
         context['pictures'] = models.Picture.objects.filter(requester=self.request.role).order_by('-dt')
+        context['page'] = 'pictures'
         return context
 
 
@@ -304,6 +317,11 @@ class PicturesView(TemplateView):
 class RequestPictureView(FormView):
     template_name = 'space/pictures_request.html'
     form_class = forms.RequestPictureForm
+
+    def get_context_data(self, **kwargs):
+        context = super(RequestPictureView, self).get_context_data(**kwargs)
+        context['page'] = 'pictures'
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(RequestPictureView, self).get_form_kwargs()

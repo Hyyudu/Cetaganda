@@ -1,0 +1,24 @@
+{% extends "space/base.html" %}
+
+{% block space_content %}
+    <h2>Все корабли</h2>
+
+    <table class="record-table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Навигатор</th>
+                <th>Дипломаты</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ship in ships %}
+                <tr>
+                    <td>{{ ship.name }}</td>
+                    <td>{% if ship.fleet %}{{ ship.fleet.navigator }}{% else %}не назначен{% endif %}</td>
+                    <td>{% for diplomat in ship.diplomats.all %}{{ diplomat }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
