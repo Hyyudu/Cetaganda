@@ -17,12 +17,15 @@ class DeployForm(forms.Form):
         self.alliance = models.Alliance.get_alliance(self.role)
         self.fields['home'].widget.choices = [
             (planet.id, planet.name)
-            for planet in self.alliance.point_set.all().order_by('name')
+            # for planet in self.alliance.point_set.all().order_by('name')
+            # Во время регаты запускаем с любой точки
+            for planet in models.Point.objects.filter(type='planet')
         ]
 
     def clean_home(self):
         try:
-            return models.Point.objects.get(alliance=self.alliance, pk=self.cleaned_data['home'])
+            # return models.Point.objects.get(alliance=self.alliance, pk=self.cleaned_data['home'])
+            return models.Point.objects.get(pk=self.cleaned_data['home'])
         except models.Point.DoesNotExist:
             raise forms.ValidationError('Неизвестная планета')
 
@@ -31,6 +34,11 @@ class DeployForm(forms.Form):
         ship.position = self.cleaned_data['home']
         ship.home = self.cleaned_data['home']
         ship.save()
+
+        self.role.records.create(
+            category='Космос',
+            message='Корабль "%s" выведен на орбиту %s' % (ship.name, ship.position)
+        )
 
 
 class FleetForm(forms.Form):
