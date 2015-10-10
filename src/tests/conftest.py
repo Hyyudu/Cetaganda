@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 import pytest
 
 from roles.models import Role, GameField
+from space.models import Point, Alliance, Transit
 
 
 def create_user(username, **kwargs):
@@ -99,3 +100,28 @@ def roles(users, role_fields):
         'aragorn': aragorn_role,
         'boromir': boromir_role,
     }
+
+
+@pytest.fixture()
+def alliances():
+    return [
+        Alliance.objects.create(name='Барраяр', role_name='Барраяр'),
+        Alliance.objects.create(name='Цетаганда', role_name='Цетаганда'),
+    ]
+
+
+@pytest.fixture()
+def points():
+    p1 = Point.objects.create(name='Планета 1', type='planet')
+    p2 = Point.objects.create(name='Планета 2', type='planet')
+    p3 = Point.objects.create(name='Планета 3', type='planet')
+    tr1 = Point.objects.create(name='Переход 1', type='transit')
+    tr2 = Point.objects.create(name='Переход 2', type='transit')
+    tr3 = Point.objects.create(name='Переход 3', type='transit')
+    Transit.objects.create(point1=p1, point2=tr1)
+    Transit.objects.create(point1=p2, point2=tr2)
+    Transit.objects.create(point1=p3, point2=tr3)
+    Transit.objects.create(point1=tr1, point2=tr2)
+    Transit.objects.create(point1=tr2, point2=tr3)
+    Transit.objects.create(point1=tr3, point2=tr1)
+    return [p1, p2, p3, tr1, tr2, tr3]
