@@ -7,6 +7,7 @@
         <thead>
             <tr>
                 <th>Название</th>
+                <th>Владелец</th>
                 <th>Навигатор</th>
                 <th>Дипломаты</th>
             </tr>
@@ -15,6 +16,7 @@
             {% for ship in ships %}
                 <tr>
                     <td>{{ ship.name }}</td>
+                    <td>{{ ship.owner }}</td>
                     <td>{% if ship.fleet %}{{ ship.fleet.navigator }}{% else %}не назначен{% endif %}</td>
                     <td>{% for diplomat in ship.diplomats.all %}{{ diplomat }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                 </tr>
