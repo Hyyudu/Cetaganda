@@ -45,11 +45,17 @@ class TransitAdmin(admin.ModelAdmin):
 @admin.register(models.Fleet)
 class FleetAdmin(admin.ModelAdmin):
     list_display = ('name', 'point', 'navigator', 'ships_amount')
-    actions = ['turn']
+    actions = ['turn', 'clean']
 
     def turn(self, request, queryset):
         move_fleets()
     turn.short_description = 'Запустить фазу перемещений'
+
+    def clean(self, request, queryset):
+        for fleet in models.Fleet.objects.all():
+            if not fleet.ship_set.exists():
+                fleet.delete()
+    clean.short_description = 'Удалить пустые флоты'
 
 
 @admin.register(models.Ship)
