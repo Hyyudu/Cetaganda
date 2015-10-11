@@ -12,7 +12,7 @@
         {% else %}
             нет
         {% endif %}
-        (<a href="{% url "space:ship_fleet" object.id %}">сменить</a>)
+        (<a href="{% url "space:ship_fleet" object.id %}">сменить навигатора</a>)
     </p>
 
     <p>{% if object.diplomats.exists %}
@@ -22,5 +22,13 @@
     {% endif %}
         (<a href="{% url "space:ship_diplomats" object.id %}">изменить</a>)
     <p>
+
+    <p>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="destroy">
+            <input type="submit" value="Уничтожить!" onclick="return confirm('Вы уверены, что хотите уничтожить корабль?')">
+        </form>
+    </p>
 
 {% endblock %}

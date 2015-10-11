@@ -52,6 +52,9 @@ class ShipView(DetailView):
     def get_template_names(self):
         return ['space/ship_%s.html' % self.object.state]
 
+    def get_queryset(self):
+        return models.Ship.all
+
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user.has_perm('space.can_edit_ship') or request.role == self.object.owner:
@@ -75,10 +78,23 @@ class ShipView(DetailView):
         context = self.get_context_data(object=self.object)
 
         if request.POST.get('action') == 'deploy' and self.object.state == 'dockyard':
-            context['deploy_form'] = forms.DeployForm(self.request.role, request.POST)
+            context['deploy_form'] = forms.DeployForm(request.role, request.POST)
             if context['deploy_form'].is_valid():
                 context['deploy_form'].save(self.object)
                 return HttpResponseRedirect(self.object.get_absolute_url())
+
+        if request.POST.get('action') == 'destroy':
+            self.object.in_space = False
+            self.object.is_alive = False
+            self.object.fleet = None
+            self.object.save()
+
+            request.role.records.create(
+                category='Космос',
+                message='Вы запустили самоуничтожение корабля "%s"' % self.object,
+            )
+            return HttpResponseRedirect(self.object.get_absolute_url())
+
         return self.render_to_response(context)
 
 
