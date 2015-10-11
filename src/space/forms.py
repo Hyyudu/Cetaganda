@@ -1,5 +1,6 @@
 # coding: utf8
 from __future__ import unicode_literals
+from collections import OrderedDict
 
 from django import forms
 from django.conf import settings
@@ -221,6 +222,37 @@ class RequestPictureForm(forms.Form):
         )
 
 
+class FriendshipForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.ship = kwargs.pop('ship')
+        super(FriendshipForm, self).__init__(*args, **kwargs)
+
+        other = models.Ship.objects.filter(is_alive=True, in_space=True).\
+            exclude(id=self.ship.id).order_by('name')
+
+        self.fields = OrderedDict(self.fields)
+        for ship in other:
+            self.fields['friend_%s' % ship.id] = \
+                forms.BooleanField(
+                    initial=self.ship.friends.filter(id=ship.id).exists(),
+                    label=ship.name,
+                    required=False,
+            )
+
+    def save(self, *args, **kwargs):
+        other = models.Ship.objects.filter(is_alive=True, in_space=True).\
+            exclude(id=self.ship.id).order_by('name')
+
+        for ship in other:
+            if self.cleaned_data.get('friend_%s' % ship.id):
+                try:
+                    self.ship.friends.add(ship)
+                except Exception:
+                    pass
+            else:
+                self.ship.friends.filter(id=ship.id).delete()
+
+
 class BaseConnectionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(BaseConnectionForm, self).__init__(*args, **kwargs)
@@ -237,12 +269,4 @@ DiplomatsFormSet = forms.inlineformset_factory(
     form=BaseConnectionForm,
     exclude=['is_locked'],
     extra=1,
-)
-
-FriendshipFormSet = forms.inlineformset_factory(
-    models.Ship,
-    models.Ship.friends.through,
-    fk_name='from_ship',
-    exclude=['is_locked'],
-    extra=3,
 )

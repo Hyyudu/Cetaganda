@@ -7,15 +7,9 @@
         {% csrf_token %}
 
         <table>
-            {{ formset.management_form }}
-
-            {% for form in formset.forms %}
-                {{ form.as_table }}
-                <tr><td colspan="2"><hr></td></tr>
-            {% endfor %}
+            {{ form }}
+            <tr><td colspan="2"><input type="submit" value="Сохранить"/>
+                или <a href="{% url "space:diplomacy" %}">вернуться</a></td></tr>
         </table>
-
-        <input type="submit" value="Сохранить"/>  или <a href="{% url "space:diplomacy" %}">вернуться</a>
     </form>
-
 {% endblock %}

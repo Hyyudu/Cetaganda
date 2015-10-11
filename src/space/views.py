@@ -292,9 +292,10 @@ class DiplomacyView(TemplateView):
 
 @class_view_decorator(login_required)
 @class_view_decorator(role_required)
-class FriendshipView(TemplateView):
+class FriendshipView(FormView):
     """Корабли, на которые не нападает текущий корабль"""
     template_name = 'space/ship_friends.html'
+    form_class = forms.FriendshipForm
 
     def dispatch(self, request, *args, **kwargs):
         if not _is_diplomat(self.request.role):
@@ -304,24 +305,14 @@ class FriendshipView(TemplateView):
 
         return super(FriendshipView, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        context = {
-            'formset': forms.FriendshipFormSet(instance=self.object),
-            'object': self.object,
-        }
-        return self.render_to_response(context)
+    def get_form_kwargs(self):
+        kwargs = super(FriendshipView, self).get_form_kwargs()
+        kwargs['ship'] = self.object
+        return kwargs
 
-    def post(self, request, *args, **kwargs):
-        context = {
-            'formset': forms.FriendshipFormSet(request.POST, instance=self.object),
-            'object': self.object,
-        }
-
-        if context['formset'].is_valid():
-            context['formset'].save()
-            return HttpResponseRedirect(reverse('space:diplomacy') + '?save=ok')
-        else:
-            return self.render_to_response(context)
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('space:diplomacy'))
 
 
 @class_view_decorator(login_required)
