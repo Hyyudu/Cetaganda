@@ -14,7 +14,7 @@ from roles.models import Role, GenericManager
 class Alliance(models.Model):
     name = models.CharField(verbose_name='Название', max_length=100)
     role_name = models.CharField(verbose_name='Название у роли', max_length=100)
-    resources = JSONField(verbose_name='Ресурсы', default='{}')
+    resources = JSONField(verbose_name='Ресурсы', default='{}', blank=True)
 
     def __unicode__(self):
         return self.name
@@ -178,7 +178,7 @@ class Ship(models.Model):
     )
     type = models.CharField(verbose_name='Тип', max_length=10, choices=SHIP_TYPES)
     name = models.CharField(verbose_name='Название', max_length=100)
-    resources = JSONField(verbose_name='Ресурсы', default='{}')  # для транспорта
+    resources = JSONField(verbose_name='Ресурсы', default='{}', blank=True)  # для транспорта
     diplomats = models.ManyToManyField(Role, verbose_name='Дипломаты', related_name='responsible_for')
     is_alive = models.BooleanField(verbose_name='Живой', default=True)
     home = models.ForeignKey(
@@ -186,7 +186,7 @@ class Ship(models.Model):
         null=True, blank=True, default=None,
         related_name='home',
     )
-    friends = models.ManyToManyField('self', verbose_name='Дружба')
+    friends = models.ManyToManyField('self', verbose_name='Дружба', blank=True)
     drive = models.BooleanField(verbose_name='Гипердрайв', default=False)
     shield = models.BooleanField(verbose_name='Броня', default=False)
     laser = models.BooleanField(verbose_name='Лазер', default=False)
