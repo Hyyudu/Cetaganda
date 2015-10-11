@@ -127,6 +127,10 @@ def fight_with_enemy(fleet, enemy_fleet):
 
         return True
 
+    if _are_friends(fleet, enemy_fleet):
+        log.info(" %s and %s are friends", fleet, enemy_fleet)
+        return True
+
     while True:
         log.info('Turn')
 
@@ -201,6 +205,20 @@ def _is_shoot(ship):
         log.info('SHOT %s', ship)
         return True
     return False
+
+
+def _are_friends(fleet, enemy_fleet):
+    if fleet.ship_set.filter(in_space=True).exclude(type='t').exists():
+        return False
+
+    for ship in fleet.ship_set.filter(in_space=True):
+        for enemy in enemy_fleet.ship_set.filter(in_space=True):
+            if ship.friends.filter(id=enemy.id).exists() and enemy.friends.filter(id=ship.id).exists():
+                pass
+            else:
+                return False
+
+    return True
 
 
 def harvest(fleet):

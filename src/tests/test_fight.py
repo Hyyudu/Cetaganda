@@ -38,7 +38,7 @@ def test_fight(roles, points, alliances):
     assert records[0].category == 'Космос'
     assert records[0].message == 'Ваш корабль "frodoship" перемещается в точку "Переход 2 (t)"'
     assert records[1].category == 'Космос'
-    assert records[1].message == 'Ваш корабль "frodoship" попадает по кораблю "legoship"'
+    assert records[1].message == 'Ваш корабль "frodoship" уничтожает корабль "legoship"'
 
     ship1 = refresh(ship1)
     assert ship1.is_alive

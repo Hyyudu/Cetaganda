@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import pytest
 
-from space.models import Ship, Alliance, Fleet
+from space.models import Ship, Alliance, Fleet, SHIPS
 from space.tactics import move_fleets
 from tests.utils import refresh
 
@@ -143,4 +143,4 @@ def test_station_move(roles, points, alliances):
     assert fleet.get_distance() == 0
 
     ship, fleet = create_ship('t', roles['frodo'], roles['legolas'], points[0], fleet=fleet)
-    assert fleet.get_distance() == 1
+    assert fleet.get_distance() == SHIPS['t']['distance']
