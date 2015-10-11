@@ -9,6 +9,8 @@
 
     {% if alliance %}
         <p>Ваш альянс: {{ alliance.name }}</p>
+        <p>Гипердрайв - {{ ship.drive|yesno }}, броня - {{ ship.shield|yesno }}, лазер - {{ ship.laser|yesno }}.</p>
+
         {% if dockyards %}
             <p>Верфь: {{ dockyard.name }}</p>
 

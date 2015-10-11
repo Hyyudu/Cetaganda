@@ -183,8 +183,8 @@ def fight_with_enemy(fleet, enemy_fleet):
 def _is_shoot(ship):
     dice = str(random.randint(0, 9))
     log.info('DICE %s', dice)
-    if dice in models.SHIPS[ship.type]['hit']:
-        log.info('ENEMY SHOT %s', ship)
+    if dice in models.SHIPS[ship.type]['hit'] or (dice == 0 and ship.laser):
+        log.info('SHOT %s', ship)
         return True
     return False
 

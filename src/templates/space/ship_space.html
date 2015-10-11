@@ -4,6 +4,8 @@
     <h1>Корабль "{{ object.name }}". Местонахождение: {{ object.position }}.</h1>
 
     <p>Порт приписки: {{ object.home.name }}</p>
+    <p>Гипердрайв - {{ ship.drive|yesno }}, броня - {{ ship.shield|yesno }}, лазер - {{ ship.laser|yesno }}.</p>
+
     <p>В составе флота:
         {% if object.fleet %}
             "{{ object.fleet.name }}", навигатор {{ object.fleet.navigator }}

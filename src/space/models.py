@@ -78,9 +78,7 @@ class Fleet(models.Model):
 
     def get_distance(self):
         ships = list(self.ship_set.all())
-        if any(ship.type == 't' for ship in ships):
-            return 1
-        return min(SHIPS[ship.type]['distance'] for ship in ships)
+        return min(SHIPS[ship.type]['distance'] + int(ship.drive) for ship in ships)
 
     def route_points(self):
         if not self.route:
@@ -186,6 +184,9 @@ class Ship(models.Model):
         related_name='home',
     )
     friends = models.ManyToManyField('self', verbose_name='Дружба')
+    drive = models.BooleanField(verbose_name='Гипердрайв', default=False)
+    shield = models.BooleanField(verbose_name='Броня', default=False)
+    laser = models.BooleanField(verbose_name='Лазер', default=False)
 
     objects = GenericManager(is_alive=True)
     all = GenericManager()
@@ -219,12 +220,15 @@ class Ship(models.Model):
             raise ValueError('Вам необходимо вступить в альянс, чтобы покупать корабли')
 
         amount = cls.objects.filter(alliance=alliance).count()
-        name = '%s%s%s' % (SHIPS[object_type]['name'][0], amount + 1, alliance.name[0])
+        name = '%s%s%s' % (SHIPS[object_type[0]]['name'][0], amount + 1, alliance.name[0])
         return cls.objects.create(
             owner=owner,
             alliance=alliance,
-            type=object_type,
+            type=object_type[0],
             name=name,
+            drive=len(object_type) == 4 and object_type[1] == 'd',
+            shield=len(object_type) == 4 and object_type[2] == 's',
+            laser=len(object_type) == 4 and object_type[3] == 'l',
         )
 
     @classmethod
@@ -238,6 +242,38 @@ class Ship(models.Model):
                 'class': cls,
             }
             for k, v in SHIPS.items()
+        ] + cls.get_additional()
+
+    @classmethod
+    def get_additional(cls):
+        ships = [
+            ['l..l', 'Линкор', 'с лазером', 5500],
+            ['l.sl', 'Линкор', 'с лазером и броней', 6500],
+            ['l.s.', 'Линкор', 'с броней', 6000],
+            ['ld..', 'Линкор', 'с гипердрайвом', 5300],
+            ['ld.l', 'Линкор', 'с гипердрайвом и лазером', 5800],
+            ['ldsl', 'Линкор', 'с гипердрайвом, лазером и броней', 6800],
+
+            ['k..l', 'Крейсер', 'с лазером', 1500],
+            ['kd..', 'Крейсер', 'с гипердрайвом', 1300],
+            ['kd.l', 'Крейсер', 'с гипердрайвом и лазером', 1800],
+
+            ['td..', 'Транспорт', 'с гипердрайвом', 800],
+
+            ['s..l', 'Станция', 'с лазером', 10500],
+            ['s.s.', 'Станция', 'с броней', 1100],
+            ['s.sl', 'Станция', 'с броней и лазером', 11500],
+        ]
+
+        return [
+            {
+                'type': ship[0],
+                'name': ship[1],
+                'description': ship[2],
+                'cost': ship[3],
+                'class': cls,
+            }
+            for ship in ships
         ]
 
     @classmethod
