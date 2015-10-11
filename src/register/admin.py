@@ -6,6 +6,6 @@ from register import models
 
 @admin.register(models.Record)
 class PointAdmin(admin.ModelAdmin):
-    list_display = ('role', 'category', 'message')
+    list_display = ('dt', 'role', 'category', 'message')
     ordering = ('-dt',)
     list_filter = ('role', 'category')
