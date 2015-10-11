@@ -22,7 +22,7 @@ class AllianceAdmin(admin.ModelAdmin):
     actions = ['clean']
 
     def clean(self, request, queryset):
-        models.Ship.objects.all().delete()
+        models.Ship.all.all().delete()
         models.Fleet.objects.all().delete()
         for role in Role.objects.all():
             role.set_field(settings.MONEY_FIELD, 150000)
