@@ -11,6 +11,7 @@
                 <th>Тип</th>
                 <th>Флот</th>
                 <th>Положение</th>
+                <th>Ресурсы</th>
             </tr>
             {% for ship in active_ships %}
                 <tr>
@@ -18,6 +19,7 @@
                     <td>{{ ship.get_type_display }}</td>
                     <td>{{ ship.fleet.name|default:"" }}</td>
                     <td>{{ ship.position }}</td>
+                    <td>{{ ship.res }}</td>
                 </tr>
             {% endfor %}
         </table>

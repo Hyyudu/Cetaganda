@@ -215,6 +215,10 @@ class Ship(models.Model):
             return 'dockyard'
         return 'space'
 
+    @property
+    def res(self):
+        return ', '.join('%s - %s' % (k, v) for k, v in (self.resources or {}).items())
+
     @classmethod
     def create(cls, object_type, owner):
         try:
