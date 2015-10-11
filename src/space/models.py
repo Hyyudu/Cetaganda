@@ -63,7 +63,7 @@ class Fleet(models.Model):
     name = models.CharField(verbose_name='Название', max_length=100)
     point = models.ForeignKey(Point, verbose_name='Позиция')
     navigator = models.ForeignKey(Role, verbose_name='Навигатор')
-    route = models.TextField(verbose_name='Заказанный маршрут', default='')
+    route = models.TextField(verbose_name='Заказанный маршрут', blank=True, default='')
 
     class Meta:
         verbose_name = 'Флот'
