@@ -77,7 +77,7 @@ class Fleet(models.Model):
     ships_amount.short_description = 'Кораблей'
 
     def get_distance(self):
-        ships = list(self.ship_set.all())
+        ships = list(self.ship_set.filter(is_alive=True, in_space=True))
         return min(SHIPS[ship.type]['distance'] + int(ship.drive) for ship in ships)
 
     def route_points(self):

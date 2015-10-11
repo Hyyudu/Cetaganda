@@ -135,6 +135,9 @@ class TacticsMergeForm(forms.Form):
 
             fleet.delete()
 
+        if merged_fleet.ship_set.filter(is_alive=True, type='t').exists():
+            merged_fleet.ship_set.filter(is_alive=True, type='s').update(in_space=False)
+
 
 class RouteForm(forms.Form):
     route = forms.CharField(label='Маршрут', required=False, widget=forms.TextInput(attrs={'style': 'width: 500px'}))

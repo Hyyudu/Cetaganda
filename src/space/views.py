@@ -218,6 +218,7 @@ class FleetSplitView(TemplateView):
             )
 
             ship.fleet = fleet
+            ship.in_space = True
             ship.save()
 
         self.object.delete()
