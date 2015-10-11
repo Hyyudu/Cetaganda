@@ -226,7 +226,7 @@ class Ship(models.Model):
         except Alliance.DoesNotExist:
             raise ValueError('Вам необходимо вступить в альянс, чтобы покупать корабли')
 
-        amount = cls.objects.filter(alliance=alliance).count()
+        amount = cls.all.filter(alliance=alliance).count()
         name = '%s%s%s' % (SHIPS[object_type[0]]['name'][0], amount + 1, alliance.name[0])
         return cls.objects.create(
             owner=owner,
