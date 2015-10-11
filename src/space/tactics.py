@@ -101,16 +101,30 @@ def fight_with_enemy(fleet, enemy_fleet):
             return
 
         log.info("HIT from %s TO %s", ship, target)
-        target.destroy()
 
-        ship.owner.records.create(
-            category='Космос',
-            message='Ваш корабль "%s" попадает по кораблю "%s"' % (ship, target),
-        )
-        target.owner.records.create(
-            category='Космос',
-            message='Ваш корабль "%s" уничтожен залпом "%s"' % (target, ship),
-        )
+        if target.shield:
+            target.shield = False
+            target.save()
+            ship.owner.records.create(
+                category='Космос',
+                message='Ваш корабль "%s" попадает по кораблю "%s"' % (ship, target),
+            )
+            target.owner.records.create(
+                category='Космос',
+                message='Ваш корабль "%s" поврежден залпом "%s"' % (target, ship),
+            )
+
+        else:
+            target.destroy()
+            target.owner.records.create(
+                category='Космос',
+                message='Ваш корабль "%s" уничтожен залпом "%s"' % (target, ship),
+            )
+            ship.owner.records.create(
+                category='Космос',
+                message='Ваш корабль "%s" уничтожает корабль "%s"' % (ship, target),
+            )
+
         return True
 
     while True:
