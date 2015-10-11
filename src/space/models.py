@@ -37,7 +37,8 @@ class Point(models.Model):
         ('transit', 'PV-переход'),
     )
     type = models.CharField(verbose_name='Тип', max_length=20, choices=TYPES)
-    alliance = models.ForeignKey(Alliance, verbose_name='Альянс', null=True, blank=True, default=None)
+    alliance = models.ForeignKey(Alliance, verbose_name='Альянс', null=True, blank=True, default=None,
+                                 on_delete=models.SET_DEFAULT)
     name = models.CharField(verbose_name='Название', max_length=100)
     resources = JSONField(verbose_name='Ресурсы', default='[]')
 
