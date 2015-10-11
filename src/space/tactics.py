@@ -248,8 +248,13 @@ def unloading(fleet):
                         ', '.join('%s - %s' % (k, v) for k, v in transport.resources.items())
             )
 
-            for res, amount in transport.resources.items():
-                transport.alliance.resources[res] = transport.alliance.resources.get(res, 0) + amount
-            transport.alliance.save()
-            transport.resources = {}
-            transport.save()
+            try:
+                if not transport.alliance.resources:
+                    transport.alliance.resources = {}
+                for res, amount in transport.resources.items():
+                    transport.alliance.resources[res] = transport.alliance.resources.get(res, 0) + amount
+                transport.alliance.save()
+                transport.resources = {}
+                transport.save()
+            except Exception:
+                pass
