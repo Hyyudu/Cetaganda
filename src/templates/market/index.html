@@ -5,7 +5,9 @@
 {% block content %}
     <h1>Биржа</h1>
 
-    <p>Ваши запасы: {{ money }}. <form method="POST">{% csrf_token %}<input type="text" name="amount"><input type="submit" value="Добавить"></form></p>
+    <p>Ваши запасы: {{ money }}.
+
+    {# <form method="POST">{% csrf_token %}<input type="text" name="amount"><input type="submit" value="Добавить"></form></p> #}
 
     <h2>В продаже:</h2>
 

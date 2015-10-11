@@ -21,11 +21,11 @@ class MarketView(TemplateView):
         context['money'] = self.request.role.get_field(settings.MONEY_FIELD) or 0
         return context
 
-    def post(self, request, *args, **kwargs):
-        if request.POST.get('amount').isdigit():
-            money = request.role.get_field(settings.MONEY_FIELD) or 0
-            request.role.set_field(settings.MONEY_FIELD, money + int(request.POST.get('amount')))
-        return HttpResponseRedirect(reverse('market:index'))
+    # def post(self, request, *args, **kwargs):
+    #     if request.POST.get('amount').isdigit():
+    #         money = request.role.get_field(settings.MONEY_FIELD) or 0
+    #         request.role.set_field(settings.MONEY_FIELD, money + int(request.POST.get('amount')))
+    #     return HttpResponseRedirect(reverse('market:index'))
 
 
 @class_view_decorator(login_required)
