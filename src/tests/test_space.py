@@ -96,6 +96,7 @@ def test_transport(roles, points, alliances):
 
     ship = refresh(ship)
     assert ship.resources == {'sheep1': 1}
+    assert roles['frodo'].records.order_by('-dt')[0].message == 'Ваш транспорт загружен ресурсами: sheep1 - 1'
 
     fleet.route = ' '.join(map(str, [points[4].id, points[3].id, points[0].id]))
     fleet.save()
@@ -108,6 +109,8 @@ def test_transport(roles, points, alliances):
 
     alliance = refresh(alliance)
     assert alliance.resources == {'sheep1': 1}
+    assert roles['frodo'].records.order_by('-dt')[0].message == \
+        'Ваш транспорт разгружен. Добавлены ресурсы: sheep1 - 1'
 
 
 def test_transport_many_resources(roles, points, alliances):

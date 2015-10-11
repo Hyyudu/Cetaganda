@@ -197,6 +197,11 @@ def harvest(fleet):
     for transport in fleet.ship_set.filter(type='t').all():
         for resource in fleet.point.resources:
             transport.resources[resource] = transport.resources.get(resource, 0) + 1
+        transport.owner.records.create(
+            category='Космос',
+            message='Ваш транспорт загружен ресурсами: ' +
+                    ', '.join('%s - 1' % r for r in fleet.point.resources)
+        )
 
         transport.save()
 
@@ -205,6 +210,12 @@ def unloading(fleet):
     """Выгрузка ресурсов в порту приписки"""
     for transport in fleet.ship_set.filter(type='t').all():
         if transport.home == transport.position:
+            transport.owner.records.create(
+                category='Космос',
+                message='Ваш транспорт разгружен. Добавлены ресурсы: ' +
+                        ', '.join('%s - %s' % (k, v) for k, v in transport.resources.items())
+            )
+
             for res, amount in transport.resources.items():
                 transport.alliance.resources[res] = transport.alliance.resources.get(res, 0) + amount
             transport.alliance.save()
