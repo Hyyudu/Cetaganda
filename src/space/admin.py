@@ -13,7 +13,7 @@ class PointAdmin(admin.ModelAdmin):
 
 @admin.register(models.Alliance)
 class AllianceAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'resources')
 
 
 @admin.register(models.Transit)

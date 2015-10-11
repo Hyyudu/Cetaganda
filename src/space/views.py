@@ -22,6 +22,13 @@ class IndexView(TemplateView):
         context['passive_ships'] = models.Ship.objects.filter(owner=self.request.role, in_space=False, is_alive=True)
         context['dead_ships'] = models.Ship.objects.filter(owner=self.request.role, is_alive=False)
         context['page'] = 'ships'
+
+        try:
+            alliance = models.Alliance.get_alliance(self.request.role)
+            if alliance:
+                context['resources'] = alliance.resources.items()
+        except Exception:
+            pass
         return context
 
 

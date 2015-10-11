@@ -65,4 +65,20 @@
         <p>нет</p>
     {% endif %}
     </p>
+
+    {% if resources %}
+        <h2>Ресурсы вашего альянса</h2>
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Количество</th>
+            </tr>
+            {% for r in resources %}
+                <tr>
+                    <td>{{ r.0 }}</td>
+                    <td>{{ r.1 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}
