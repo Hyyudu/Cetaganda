@@ -75,5 +75,6 @@ class PictureAdmin(admin.ModelAdmin):
 
 @admin.register(models.Report)
 class ReportAdmin(admin.ModelAdmin):
-    list_display = ('dt', 'is_done')
+    list_display = ('dt', 'content', 'is_done')
     list_filter = ('is_done',)
+    list_editable = ('is_done',)
