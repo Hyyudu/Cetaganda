@@ -79,6 +79,8 @@ class Fleet(models.Model):
 
     def get_distance(self):
         ships = list(self.ship_set.filter(is_alive=True, in_space=True))
+        if not ships:
+            return 0
         return min(SHIPS[ship.type]['distance'] + int(ship.drive) for ship in ships)
 
     def route_points(self):
@@ -262,7 +264,7 @@ class Ship(models.Model):
             ['td..', 'Транспорт', 'с гипердрайвом', 800],
 
             ['s..l', 'Станция', 'с лазером', 10500],
-            ['s.s.', 'Станция', 'с броней', 1100],
+            ['s.s.', 'Станция', 'с броней', 11000],
             ['s.sl', 'Станция', 'с броней и лазером', 11500],
         ]
 
