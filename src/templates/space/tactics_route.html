@@ -1,22 +1,25 @@
 {% extends "space/base.html" %}
-
+<script src="{% static "cetaganda/js/planet_map.js" %}">
+<script src="{% static "cetaganda/js/fleet_route_interface.js" %}">
 {% block space_content %}
-    <div style="float: right">
+    <!--div style="float: right">
         <h2>Коды планет</h2>
         {% for point in points %}
             {{ point.id }} - {{ point }}<br>
         {% endfor %}
-    </div>
+    </div-->
 
     <h1>Маршрут флота "{{ object.name }}"</h1>
 
     <p>Текущее положение: {{ object.point }}.</p>
-
+	Намеченные перемещения: <span id="planned_movements"></span>
 
     <p>Введите номера точек через пробелы:</p>
     <form action="" method="POST">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Сохранить"> &nbsp; <a href="{% url "space:tactics" %}">вернуться</a>
+        <input type="submit" value="Сохранить"> &nbsp; <a href="{% url "space:tactics" %}">вернуться</a><br>
+		<span id="coords">&nbsp;</span><br>
+		<img src="http://img-fotki.yandex.ru/get/6432/19044756.1bb/0_de1fa_fcf02f95_orig" id="starmap" style="cursor:pointer">
     </form>
 {% endblock %}
