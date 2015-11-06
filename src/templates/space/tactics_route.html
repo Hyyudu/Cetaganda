@@ -20,6 +20,15 @@
         {{ form }}
         <input type="submit" value="Сохранить"> &nbsp; <a href="{% url "space:tactics" %}">вернуться</a><br>
 		<span id="coords">&nbsp;</span><br>
-		<img src="http://img-fotki.yandex.ru/get/6432/19044756.1bb/0_de1fa_fcf02f95_orig" id="starmap" style="cursor:pointer; width: 800px">
+		<div id=tactic_oldmap>
+			<span class="map_selected">Старая карта</span>
+			<span class="map_unselected"><a href=# onClick="$('#tactic_oldmap').hide(); $('#tactic_newmap').show(); return false;">Новая карта</a>
+			<img src="http://img-fotki.yandex.ru/get/6432/19044756.1bb/0_de1fa_fcf02f95_orig" class="starmap" id="map_old" style="cursor:pointer; width: 800px">
+		</div>
+		<div id=tactic_newmap style='display:none'>
+			<span class="map_selected">Новая карта</span>
+			<span class="map_unselected"><a href=# onClick="$('#tactic_oldmap').show(); $('#tactic_newmap').hide(); return false;">Старая карта</a>
+			<img src="http://img-fotki.yandex.ru/get/4301/19044756.1bc/0_debda_da62b029_orig" class="starmap" id="map_new" style="cursor:pointer; width: 800px">
+		</div>
     </form>
 {% endblock %}

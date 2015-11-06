@@ -4,134 +4,153 @@ function planet_map()	{
 				"planet_code": 23,
 				"links": ['hegen_hub', 'klein', 'illirika'],
 				"name": 'Архипелаг Джексона',
-				"x": 179,
-				"y": 307
+				"coords" : [179, 307],
+				"new_coords": [85,336],
+				"new_pw": [105,479]
 			},
 			"barrayar": {
 				"planet_code": 7,
 				"links": ['komarra'],
 				"name": 'Барраяр',
-				"x": 905,
-				"y": 640
+				"coords" : [905,640],
+				"new_coords": [920,516],
+				"new_pw": [848,613]
 			},
 			"beta": {
 				"planet_code": 31,
 				"links": ['dagula', 'escobar', 'sergiyar'],
 				"name": 'Колония Бета',
-				"x": 426,
-				"y": 804
+				"coords" : [426,804],
+				"new_coords": [338,792],
+				"new_pw": [443,871]
 			},
 			"vervan": {
 				"planet_code": 15,
 				"links": ['hegen_hub', 'illirika'],
 				"name": 'Верван',
-				"x": 129,
-				"y": 106
+				"coords" : [129,106],
+				"new_coords": [196,85],
+				"new_pw": [28,83]
 			},
 			"dagula": {
 				"planet_code": 5,
 				"links": ['hegen_hub', 'xi_kita', 'marilak', 'earth', 'beta'],
 				"name": 'Дагула',
-				"x": 438,
-				"y": 562
+				"coords" : [438,562],
+				"new_coords": [354,565],
+				"new_pw": [413,498]
 			},
 			"earth": {
 				"planet_code": 1,
 				"links": ['dagula', 'hegen_hub', 'sigma_kita', 'escobar'],
 				"name": 'Земля',
-				"x": 574,
-				"y": 500
+				"coords" : [574,500],
+				"new_coords": [510,541],
+				"new_pw": [614,500]
 			},
 			"sergiyar": {
 				"planet_code": 29,
 				"links": ['escobar','beta', 'komarra'],
 				"name": 'Сергияр',
-				"x": 673,
-				"y": 797
+				"coords" : [673,797],
+				"new_coords": [764,889],
+				"new_pw": [653,883]
 			},
 			"illirika": {
 				"planet_code": 17,
 				"links": ['vervan', 'archipelag', 'tau_kita'],
 				"name": 'Иллирика',
-				"x": 101,
-				"y": 896
+				"coords" : [101,896],
+				"new_coords": [170,813],
+				"new_pw": [45,920]
 			},
 			"klein": {
 				"planet_code": 25,
 				"links": ['archipelag', 'escobar'],
 				"name": 'Станция Клайн',
-				"x": 270,
-				"y": 664
+				"coords" : [270,664],
+				"new_coords": [149,689],
+				"new_pw": [280,673]
 			},
 			"komarra": {
 				"planet_code": 3,
 				"links": ['sergiyar', 'earth', 'tau_kita', 'ro_kita', 'barrayar'],
 				"name": 'Комарра',
-				"x": 759,
-				"y": 638
+				"coords" : [759,638],
+				"new_coords": [663,615],
+				"new_pw": [769,663]
 			},
 			"ksi_kita": {
 				"planet_code": 19,
 				"links": ['sigma_kita','dagula', 'eta_kita'],
 				"name": 'Кси Кита',
-				"x": 663,
-				"y": 145
+				"coords" : [663,145],
+				"new_coords": [690,95],
+				"new_pw": [795,138]
 			},
 			"marilak": {
 				"planet_code": 35,
 				"links": ['dagula', 'sigma_kita'],
 				"name": 'Марилак',
-				"x": 463,
-				"y": 254
+				"coords" : [463,254],
+				"new_coords": [573,187],
+				"new_pw": [478,214]
 			},
 			"mu_kita": {
 				"planet_code": 13,
 				"links": ['hegen_hub', 'eta_kita'],
 				"name": 'Мю Кита',
-				"x": 458,
-				"y": 62
+				"coords" : [458,62],
+				"new_coords": [364,85],
+				"new_pw": [463,95]
 			},
 			"ro_kita": {
 				"planet_code": 9,
 				"links": ['komarra', 'eta_kita'],
 				"name": 'Ро Кита',
-				"x": 871,
-				"y": 422
+				"coords" : [871,422],
+				"new_coords": [716,459],
+				"new_pw": [835,447]
 			},
 			"sigma_kita": {
 				"planet_code": 37,
 				"links": ['earth', 'marilak', 'eta_kita', 'ksi_kita'],
 				"name": 'Сигма Кита',
-				"x": 671,
-				"y": 339
+				"coords" : [671,339],
+				"new_coords": [828,334],
+				"new_pw": [695,339]
 			},
 			"tau_kita": {
 				"planet_code": 33,
 				"links": ['komarra', 'illirika'],
 				"name": 'Тау Кита',
-				"x": 911,
-				"y": 903
+				"coords" : [911,903],
+				"new_coords": [905,779],
+				"new_pw": [950,905]
 			},
 			"hegen_hub": {
 				"planet_code": 21,
 				"links": ['archipelag', 'vervan', 'mu_kita', 'earth', 'dagula'],
 				"name": 'Хеген Хаб',
-				"x": 321,
-				"y": 353
+				"coords" : [321,353],
+				"new_coords": [264,447],
+				"new_pw": [316,302]
 			},
 			"eskobar": {
 				"planet_code": 27,
 				"links": ['klein', 'earth', 'beta', 'sergiyar'],
 				"name": 'Эскобар',
-				"x": 564,
-				"y": 693
+				"coords" : [564,693],
+				"new_coords": [540,818],
+				"new_pw": [544,694]
 			},
 			"eta_kita": {
 				"planet_code": 11,
 				"links": ['mu_kita', 'sigma_kita', 'ksi_kita', 'ro_kita'],
 				"name": 'Эта Кита',
-				"x": 858,
-				"y": 102
+				"coords" : [858,102],
+				"new_coords": [941,233],
+				"new_pw": [924,87]
 			}
 		};
 

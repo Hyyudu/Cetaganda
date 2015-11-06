@@ -2,40 +2,54 @@
 
 		planet_radius = 30;
 		pw_radius = 70;
+		mapX=0;
+		mapY=0;
 
 		var planets = planet_map();
-
-		function getPlanetByCoords(mapX, mapY, cn)	{
-			found = 0;
-			for (name in planets)	{
-				planet = planets[name];
-				range = Math.sqrt(Math.pow(planet.x - mapX,2) + Math.pow(planet.y - mapY,2))
-				if (range<=pw_radius)	{
-					found = 1;
-					break;
-				}
-			}
-			if (!found) return null;
-			res = {id: name, planet_name: planet.name+" (t)", on_orbit: false, code: planet.planet_code+1}
-			if (range<planet_radius)	{
-				res.planet_name = planet.name+" (p)";
-				res.on_orbit = true;
-				res.code = planet.planet_code
-			}
-			if (cn!=undefined)
-				console.log(res)
-			return res;
+		
+		function getRange(point1, point2)	{
+			return Math.sqrt(Math.pow(point1[0]-point2[0],2) + Math.pow(point1[1] - point2[1],2))
 		}
 
-		$('#starmap').click(function(e) {
-			var mapX = Math.round(e.offsetX/$('#starmap')[0].width*1000);
-			var mapY = Math.round(e.offsetY/$('#starmap')[0].height*1000);
-			planet = getPlanetByCoords(mapX, mapY,1)
-			if (planet)	{
-				$('#id_route').val($('#id_route').val().trim()+" "+planet.code)
-				codes2names()
+		function getPlanetByCoords(mapX, mapY, id)	{
+			for (name in planets)	{
+				planet = planets[name];
+				if (id == 'map_old')	{
+					range = getRange(planet.coords, [mapX, mapY])
+					if (range<=pw_radius)	{
+						res = {id: name, planet_name: planet.name+" (t)", on_orbit: false, code: planet.planet_code+1}
+						if (range <= planet_radius)
+							res = {id: name, planet_name: planet.name+" (p)", on_orbit: true, code: planet.planet_code}
+						return res;
+					}
+				}
+				else	{	// new map
+					range = getRange(planet.new_coords, [mapX, mapY])
+					if (range<planet_radius)	{
+						res = {id: name, planet_name: planet.name+" (p)", on_orbit: true, code: planet.planet_code}
+						return res;
+					}
+					range = getRange(planet.new_pw, [mapX, mapY])
+					if (range<planet_radius)	{
+						res = {id: name, planet_name: planet.name+" (t)", on_orbit: false, code: planet.planet_code+1}
+						return res;
+					}					
+				
+				}
 			}
-		});
+		}
+		
+		function getPlanetOnMouse(e)	{
+			var map_id = e.currentTarget.id
+			mapX = Math.round(e.offsetX/$('#'+map_id)[0].width*1000);
+			mapY = Math.round(e.offsetY/$('#'+map_id)[0].height*1000);
+			
+			planet = getPlanetByCoords(mapX, mapY, map_id, 1)
+			
+			return planet;
+		}
+
+
 		
 		function codes2names()	{
 			val = $('#id_route').val().trim()
@@ -48,11 +62,20 @@
 		
 		$('#id_route').on('input', codes2names)
 
-		$('#starmap').mousemove(function(e){
-			var mapX = Math.round(e.offsetX/$('#starmap')[0].width*1000);
-			var mapY = Math.round(e.offsetY/$('#starmap')[0].height*1000);
+		
+		$('.starmap').click(function(e) {
+			var planet = getPlanetOnMouse(e);
+			console.log(planet)
+			if (planet)	{
+				$('#id_route').val($('#id_route').val().trim()+" "+planet.code)
+				codes2names()
+			}
+		});
+		
+		$('.starmap').mousemove(function(e){
+			
+			var planet = getPlanetOnMouse(e);
 			var text = mapX+":"+mapY;
-			planet = getPlanetByCoords(mapX, mapY)
 			if (planet)	{
 				text+=" - "+planet.planet_name;
 			}
